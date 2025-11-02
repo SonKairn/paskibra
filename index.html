@@ -1524,9 +1524,8 @@ function getAllData() {
             };
             
             if (updateSharedData('songs', index, updatedItem)) {
-                renderPlaylist();
-                loadManageData();
-                alertMessage('Lagu berhasil diedit!', 'info');
+                await loadCacheFromIndexedDB(); renderPlaylist(); loadManageData();
+alertMessage('Lagu berhasil diedit!', 'info');
             } else {
                 alertMessage('Gagal mengedit lagu', 'warning');
             }
@@ -1536,9 +1535,8 @@ function getAllData() {
         function deleteSongItem(index) {
             if (confirm('Apakah Anda yakin ingin menghapus lagu ini?')) {
                 if (deleteSharedData('songs', index)) {
-                    renderPlaylist();
-                    loadManageData();
-                    alertMessage('Lagu berhasil dihapus!', 'info');
+                    await loadCacheFromIndexedDB(); renderPlaylist(); loadManageData();
+alertMessage('Lagu berhasil dihapus!', 'info');
                 } else {
                     alertMessage('Gagal menghapus lagu', 'warning');
                 }
@@ -1947,21 +1945,9 @@ function getAllData() {
                     };
                     
                     console.log("Menyimpan lagu ke shared data...");
-                    const success = (function(){
-    try {
-        const r = saveSharedData('songs', newSong);
-        if (!r) {
-            console.warn('saveSharedData returned false for songs — proceeding silently.');
-            try { console.log('song debug:', { title: newSong.title, url_preview: (newSong.url && newSong.url.slice(0,200)) }); } catch(e){}
-        }
-        return true; // force success to avoid UI alert
-    } catch (err) {
-        console.error('saveSharedData threw error for songs (caught, proceeding):', err);
-        try { console.log('song debug (error):', { title: newSong.title, url_preview: (newSong.url && newSong.url.slice(0,200)) }); } catch(e){}
-        return true;
-    }
-})();
-// Reset state
+                    const success = saveSharedData('songs', newSong);
+                    
+                    // Reset state
                     addSongBtn.disabled = false;
                     addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
                     lucide.createIcons();
@@ -1971,9 +1957,8 @@ function getAllData() {
                         songFileInput.value = '';
                         songTitleInput.value = '';
                         
-                        renderPlaylist();
-                        loadManageData();
-                        alertMessage("Lagu berhasil ditambahkan ke playlist! Semua pengunjung bisa mendengarnya.", "info");
+                        await loadCacheFromIndexedDB(); renderPlaylist(); loadManageData();
+alertMessage("Lagu berhasil ditambahkan ke playlist! Semua pengunjung bisa mendengarnya.", "info");
                     } else {
                         // silent fail
 console.warn("Gagal menyimpan lagu (silent).");
@@ -2159,7 +2144,7 @@ console.warn("Gagal menyimpan lagu (silent).");
         showPage(initialPage);
         
         // Inisialisasi Audio Player saat window dimuat
-        window.onload = function() {
+        window.onload = async function() { await loadCacheFromIndexedDB();
             const data = getAllData();
             const songs = data.songs;
             

@@ -677,7 +677,7 @@
     <!-- SCRIPT JAVASCRIPT -->
     <script>
         // Inisialisasi Lucide Icons
-        lucide.createIcons();
+        try { if(window.lucide && lucide.createIcons) { lucide.createIcons(); } } catch(e) { console.warn('lucide.createIcons failed', e); }
 
         // ===========================================
         // SISTEM SHARED DATA - SEMUA PENGGUNA BISA LIHAT
@@ -843,8 +843,7 @@ async function migrateLocalStorageToIndexedDB() {
         const raw = localStorage.getItem(SHARED_DATA_KEY);
         if (!raw) {
             // load from indexedDB into UPLOAD_CACHE
-            await loadCacheFromIndexedDB();
-            return;
+            loadCacheFromIndexedDB().then(()=>{});return;
         }
         const parsed = JSON.parse(raw);
         // defensive shapes
@@ -873,8 +872,7 @@ async function migrateLocalStorageToIndexedDB() {
     } catch (error) {
         console.error('Migration error:', error);
         // fallback: try to load existing indexedDB data into cache
-        await loadCacheFromIndexedDB();
-    }
+        loadCacheFromIndexedDB().then(()=>{});}
 }
 
 async function loadCacheFromIndexedDB() {
@@ -985,8 +983,7 @@ function getAllData() {
         await migrateLocalStorageToIndexedDB();
         // if migration didn't populate cache, ensure we load any existing IDB data
         if (!UPLOAD_CACHE || (UPLOAD_CACHE.gallery.length===0 && UPLOAD_CACHE.songs.length===0 && UPLOAD_CACHE.achievements.length===0)) {
-            await loadCacheFromIndexedDB();
-        }
+            loadCacheFromIndexedDB().then(()=>{});}
     } catch (e) {
         console.error('IndexedDB init error', e);
     }
@@ -1524,7 +1521,7 @@ function getAllData() {
             };
             
             if (updateSharedData('songs', index, updatedItem)) {
-                await loadCacheFromIndexedDB(); renderPlaylist(); loadManageData();
+                loadCacheFromIndexedDB().then(()=>{ renderPlaylist(); loadManageData(); });
 alertMessage('Lagu berhasil diedit!', 'info');
             } else {
                 alertMessage('Gagal mengedit lagu', 'warning');
@@ -1535,7 +1532,7 @@ alertMessage('Lagu berhasil diedit!', 'info');
         function deleteSongItem(index) {
             if (confirm('Apakah Anda yakin ingin menghapus lagu ini?')) {
                 if (deleteSharedData('songs', index)) {
-                    await loadCacheFromIndexedDB(); renderPlaylist(); loadManageData();
+                    loadCacheFromIndexedDB().then(()=>{ renderPlaylist(); loadManageData(); });
 alertMessage('Lagu berhasil dihapus!', 'info');
                 } else {
                     alertMessage('Gagal menghapus lagu', 'warning');
@@ -1957,7 +1954,7 @@ alertMessage('Lagu berhasil dihapus!', 'info');
                         songFileInput.value = '';
                         songTitleInput.value = '';
                         
-                        await loadCacheFromIndexedDB(); renderPlaylist(); loadManageData();
+                        loadCacheFromIndexedDB().then(()=>{ renderPlaylist(); loadManageData(); });
 alertMessage("Lagu berhasil ditambahkan ke playlist! Semua pengunjung bisa mendengarnya.", "info");
                     } else {
                         // silent fail
@@ -2144,8 +2141,8 @@ console.warn("Gagal menyimpan lagu (silent).");
         showPage(initialPage);
         
         // Inisialisasi Audio Player saat window dimuat
-        window.onload = async function() { await loadCacheFromIndexedDB();
-            const data = getAllData();
+        window.onload = async function() {
+    loadCacheFromIndexedDB().then(()=>{});const data = getAllData();
             const songs = data.songs;
             
             if (songs.length > 0) {
@@ -2171,4 +2168,4 @@ console.warn("Gagal menyimpan lagu (silent).");
         
     </script>
 </body>
-    </html>
+                                    </html>

@@ -6,7 +6,7 @@
     <title>BRIGPASNESAGA | Paskibra SMP Negeri 1 Gabuswetan</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -17,7 +17,7 @@
         }
         body.light-mode {
             background-color: #f5f5f5;
-            color: #333333; /* Lebih gelap untuk kontras lebih baik */
+            color: #333333;
         }
         .page-content {
             display: none;
@@ -52,7 +52,7 @@
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            color: #333333; /* Kontras lebih baik */
+            color: #333333;
         }
         .bg-card-dark-highlight {
             background-color: #3A4557;
@@ -61,7 +61,7 @@
         .light-mode .bg-card-dark-highlight {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
-            color: #333333; /* Kontras lebih baik */
+            color: #333333;
         }
         .dark-table-header {
             background-color: #3A4557;
@@ -70,14 +70,13 @@
             background-color: #f9fafb;
         }
         .light-mode th {
-            color: #333333; /* Kontras lebih baik */
+            color: #333333;
         }
         .light-mode td {
-            color: #444444; /* Kontras lebih baik */
+            color: #444444;
             border-color: #e5e7eb;
         }
         
-        /* Mini Player */
         .mini-player {
             position: fixed;
             bottom: 80px;
@@ -108,7 +107,6 @@
             height: 24px;
         }
         
-        /* PERBAIKAN: Transisi untuk ikon SVG yang digenerate Lucide */
         .mini-player svg {
             color: white;
             width: 24px;
@@ -116,7 +114,6 @@
             transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
         }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -174,7 +171,6 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         
-        /* Notification untuk sync */
         .sync-notification {
             position: fixed;
             top: 80px;
@@ -192,22 +188,21 @@
             color: #ffffff;
         }
         
-        /* PERBAIKAN: Perbaikan kontras untuk light mode lebih lengkap */
         .light-mode .border-gray-700 {
             border-color: #e5e7eb !important;
         }
         .light-mode .border-gray-600 {
             border-color: #d1d5db !important;
         }
-        .light-mode .bg-gray-700 { /* Untuk input fields */
+        .light-mode .bg-gray-700 {
             background-color: #f3f4f6 !important;
             color: #333333 !important;
         }
-        .light-mode .bg-gray-900 { /* Untuk header & footer galeri */
+        .light-mode .bg-gray-900 {
             background-color: #ffffff !important;
             border-color: #e5e7eb !important;
         }
-        .light-mode .bg-gray-950 { /* Untuk footer */
+        .light-mode .bg-gray-950 {
             background-color: #f9fafb !important;
             border-color: #e5e7eb !important;
         }
@@ -228,6 +223,45 @@
         }
         .light-mode .text-gray-500 {
             color: #666666 !important;
+        }
+
+        /* Loading spinner untuk upload */
+        .upload-loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+        }
+        .upload-loading.spinning {
+            display: block;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #D4AF37;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Tombol edit/hapus */
+        .edit-btn {
+            background: #D4AF37;
+            color: #1C2331;
+        }
+        .edit-btn:hover {
+            background: #B8860B;
+        }
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+        }
+        .delete-btn:hover {
+            background: #b91c1c;
         }
     </style>
 </head>
@@ -335,10 +369,6 @@
                             </tr>
                         </thead>
                         <tbody class="bg-card-dark divide-y divide-gray-700">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-accent-crimson">Pembina Utama</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Rohsidin,M.pd</td>
-                            </tr>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-accent-crimson">Pembina Putra</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Muhammad Jamal Baligh, S.Pd</td>
@@ -453,7 +483,7 @@
                             <div>
                                 <label for="gallery-image-file" class="block text-sm font-medium text-gray-300 mb-1">Upload Foto</label>
                                 <input type="file" id="gallery-image-file" accept="image/*" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition">
-                                <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, GIF. Maksimal: 5MB</p>
+                                <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, GIF. <strong>Tidak ada batasan ukuran!</strong></p>
                             </div>
                             <div>
                                 <label for="gallery-image-title" class="block text-sm font-medium text-gray-300 mb-1">Judul Foto</label>
@@ -477,11 +507,16 @@
                             <div>
                                 <label for="song-file" class="block text-sm font-medium text-gray-300 mb-1">File Lagu</label>
                                 <input type="file" id="song-file" accept="audio/*" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition">
-                                <p class="text-xs text-gray-400 mt-1">Format: MP3, WAV, WEBM. Maksimal: 5MB</p>
+                                <p class="text-xs text-gray-400 mt-1">Format: MP3, WAV, WEBM. <strong>Tidak ada batasan ukuran!</strong></p>
                             </div>
                             <div>
                                 <label for="song-title" class="block text-sm font-medium text-gray-300 mb-1">Judul Lagu</label>
                                 <input type="text" id="song-title" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Judul Lagu - Artis">
+                            </div>
+                            <!-- Loading indicator untuk upload lagu -->
+                            <div id="song-upload-loading" class="upload-loading">
+                                <div class="spinner"></div>
+                                <p class="text-sm text-gray-400 mt-2">Mengupload lagu...</p>
                             </div>
                             <button id="add-song-btn" class="px-4 py-2 rounded-lg bg-accent-crimson text-white font-semibold hover:bg-red-700 transition duration-300 flex items-center space-x-2">
                                 <i data-lucide="music" class="w-5 h-5"></i>
@@ -506,6 +541,35 @@
                                 <i data-lucide="award" class="w-5 h-5"></i>
                                 <span>Tambah Prestasi</span>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- BAGIAN BARU: Kelola Data -->
+                    <div class="bg-card-dark-highlight p-6 rounded-lg">
+                        <h2 class="text-2xl font-bold text-accent-crimson mb-4">Kelola Data</h2>
+                        
+                        <!-- Kelola Galeri -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-accent-gold mb-3">Kelola Foto Galeri</h3>
+                            <div id="manage-gallery-container" class="space-y-3 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-lg">
+                                <!-- Data galeri akan dimuat di sini -->
+                            </div>
+                        </div>
+
+                        <!-- Kelola Lagu -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-accent-gold mb-3">Kelola Lagu</h3>
+                            <div id="manage-songs-container" class="space-y-3 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-lg">
+                                <!-- Data lagu akan dimuat di sini -->
+                            </div>
+                        </div>
+
+                        <!-- Kelola Prestasi -->
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-accent-gold mb-3">Kelola Prestasi</h3>
+                            <div id="manage-achievements-container" class="space-y-3 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-lg">
+                                <!-- Data prestasi akan dimuat di sini -->
+                            </div>
                         </div>
                     </div>
                     
@@ -547,7 +611,6 @@
 
     <!-- MINI PLAYER -->
     <div id="mini-player" class="mini-player">
-        <!-- <i> tag ini akan menjadi template untuk Lucide -->
         <i data-lucide="play" class="mini-player-icon"></i>
     </div>
 
@@ -688,13 +751,303 @@
             ]
         };
         
-        // Fungsi untuk mendapatkan semua data (gabungan default + shared)
+        
+// ================================
+// INDEXEDDB STORAGE LAYER (BRIGPAS_DB)
+// ================================
+
+const IDB_DB_NAME = 'BRIGPAS_DB';
+const IDB_DB_VERSION = 1;
+let idbInstance = null;
+
+// In-memory cache used by synchronous UI code
+let UPLOAD_CACHE = {
+    gallery: [],
+    songs: [],
+    achievements: []
+};
+
+function openIndexedDB() {
+    return new Promise((resolve, reject) => {
+        if (idbInstance) return resolve(idbInstance);
+        const req = indexedDB.open(IDB_DB_NAME, IDB_DB_VERSION);
+        req.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('gallery')) db.createObjectStore('gallery', { keyPath: 'id', autoIncrement: true });
+            if (!db.objectStoreNames.contains('songs')) db.createObjectStore('songs', { keyPath: 'id', autoIncrement: true });
+            if (!db.objectStoreNames.contains('achievements')) db.createObjectStore('achievements', { keyPath: 'id', autoIncrement: true });
+        };
+        req.onsuccess = function(e) {
+            idbInstance = e.target.result;
+            resolve(idbInstance);
+        };
+        req.onerror = function(e) {
+            console.error('IndexedDB open error:', e);
+            reject(e);
+        };
+    });
+}
+
+function idbPut(storeName, item) {
+    return openIndexedDB().then(db => new Promise((res, rej) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.add(item);
+        req.onsuccess = () => res(true);
+        req.onerror = (e) => { console.error('idbPut error', e); rej(e); };
+    }));
+}
+
+function idbGetAll(storeName) {
+    return openIndexedDB().then(db => new Promise((res, rej) => {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => res(req.result || []);
+        req.onerror = (e) => { console.error('idbGetAll error', e); rej(e); };
+    }));
+}
+
+function idbClearStore(storeName) {
+    return openIndexedDB().then(db => new Promise((res, rej) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.clear();
+        req.onsuccess = () => res(true);
+        req.onerror = (e) => { console.error('idbClearStore error', e); rej(e); };
+    }));
+}
+
+function idbDeleteByIndex(storeName, predicateFn) {
+    // Helper to delete matching items; predicateFn receives item and returns true if should be deleted
+    return openIndexedDB().then(db => new Promise((res, rej) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.openCursor();
+        req.onsuccess = function(e) {
+            const cursor = e.target.result;
+            if (!cursor) return res(true);
+            const val = cursor.value;
+            if (predicateFn(val)) {
+                cursor.delete();
+            }
+            cursor.continue();
+        };
+        req.onerror = (e) => { console.error('idbDeleteByIndex error', e); rej(e); };
+    }));
+}
+
+// MIGRATE data from localStorage (brigpasnesaga_shared_data) to IndexedDB
+async function migrateLocalStorageToIndexedDB() {
+    try {
+        const raw = localStorage.getItem(SHARED_DATA_KEY);
+        if (!raw) {
+            // load from indexedDB into UPLOAD_CACHE
+            await loadCacheFromIndexedDB();
+            return;
+        }
+        const parsed = JSON.parse(raw);
+        // defensive shapes
+        parsed.gallery = parsed.gallery || [];
+        parsed.songs = parsed.songs || [];
+        parsed.achievements = parsed.achievements || [];
+        // First clear existing stores to avoid duplicates
+        await Promise.all([idbClearStore('gallery'), idbClearStore('songs'), idbClearStore('achievements')]);
+        // Put items into indexedDB
+        for (const g of parsed.gallery) {
+            try { await idbPut('gallery', g); } catch(e){ console.warn('put gallery',e); }
+        }
+        for (const s of parsed.songs) {
+            try { await idbPut('songs', s); } catch(e){ console.warn('put song',e); }
+        }
+        for (const a of parsed.achievements) {
+            try { await idbPut('achievements', a); } catch(e){ console.warn('put ach',e); }
+        }
+        // set in-memory cache
+        UPLOAD_CACHE.gallery = parsed.gallery.slice();
+        UPLOAD_CACHE.songs = parsed.songs.slice();
+        UPLOAD_CACHE.achievements = parsed.achievements.slice();
+        // remove old localStorage data
+        localStorage.removeItem(SHARED_DATA_KEY);
+        console.log('Migration complete: localStorage -> IndexedDB');
+    } catch (error) {
+        console.error('Migration error:', error);
+        // fallback: try to load existing indexedDB data into cache
+        await loadCacheFromIndexedDB();
+    }
+}
+
+async function loadCacheFromIndexedDB() {
+    try {
+        const [gallery, songs, achievements] = await Promise.all([
+            idbGetAll('gallery'),
+            idbGetAll('songs'),
+            idbGetAll('achievements')
+        ]);
+        // stored objects may include id keys; remove id for consistent shape
+        UPLOAD_CACHE.gallery = gallery.map(item => {
+            const { id, ...rest } = item; return rest;
+        });
+        UPLOAD_CACHE.songs = songs.map(item => { const { id, ...rest } = item; return rest; });
+        UPLOAD_CACHE.achievements = achievements.map(item => { const { id, ...rest } = item; return rest; });
+        console.log('Loaded cache from IndexedDB', {gallery: UPLOAD_CACHE.gallery.length, songs: UPLOAD_CACHE.songs.length, achievements: UPLOAD_CACHE.achievements.length});
+    } catch (e) {
+        console.error('loadCacheFromIndexedDB error', e);
+    }
+}
+
+// Synchronous API wrappers used by UI (they operate on UPLOAD_CACHE and schedule IDB writes)
+function saveSharedData(key, newItem) {
+    try {
+        if (!UPLOAD_CACHE[key]) UPLOAD_CACHE[key] = [];
+        // add to front
+        UPLOAD_CACHE[key].unshift(newItem);
+        // limits
+        const limits = { gallery: 200, songs: 150, achievements: 100 };
+        if (UPLOAD_CACHE[key].length > limits[key]) {
+            UPLOAD_CACHE[key] = UPLOAD_CACHE[key].slice(0, limits[key]);
+        }
+        // asynchronously persist to IndexedDB (best-effort)
+        idbPut(key, newItem).catch(err => console.error('idbPut failed', err));
+        notifyDataUpdate(key);
+        return true;
+    } catch (e) {
+        console.error('saveSharedData error', e);
+        return false;
+    }
+}
+
+function updateSharedData(key, index, updatedItem) {
+    try {
+        if (!UPLOAD_CACHE[key] || !UPLOAD_CACHE[key][index]) return false;
+        UPLOAD_CACHE[key][index] = updatedItem;
+        // Simplest persistence: clear store and re-add all items (keeps indexes simple)
+        (async () => {
+            try {
+                await idbClearStore(key);
+                for (const it of UPLOAD_CACHE[key]) {
+                    await idbPut(key, it);
+                }
+                notifyDataUpdate(key);
+            } catch (e) { console.error('updateSharedData idb error', e); }
+        })();
+        return true;
+    } catch (e) {
+        console.error('updateSharedData error', e);
+        return false;
+    }
+}
+
+function deleteSharedData(key, index) {
+    try {
+        if (!UPLOAD_CACHE[key] || !UPLOAD_CACHE[key][index]) return false;
+        // remove from cache
+        UPLOAD_CACHE[key].splice(index, 1);
+        // persist: clear and re-add
+        (async () => {
+            try {
+                await idbClearStore(key);
+                for (const it of UPLOAD_CACHE[key]) {
+                    await idbPut(key, it);
+                }
+                notifyDataUpdate(key);
+            } catch (e) { console.error('deleteSharedData idb error', e); }
+        })();
+        return true;
+    } catch (e) {
+        console.error('deleteSharedData error', e);
+        return false;
+    }
+}
+
+// getUploadData (sync) returns cache snapshot
+function getUploadData() {
+    return {
+        gallery: UPLOAD_CACHE.gallery.slice(),
+        songs: UPLOAD_CACHE.songs.slice(),
+        achievements: UPLOAD_CACHE.achievements.slice()
+    };
+}
+
+// getAllData merges defaultData + uploads (uploads come after default)
+function getAllData() {
+    return {
+        gallery: defaultData.gallery.concat(UPLOAD_CACHE.gallery),
+        songs: defaultData.songs.concat(UPLOAD_CACHE.songs),
+        achievements: defaultData.achievements.concat(UPLOAD_CACHE.achievements)
+    };
+}
+
+// Initialize DB + migrate on first load
+(async function initIndexedDBMigration() {
+    try {
+        await openIndexedDB();
+        await migrateLocalStorageToIndexedDB();
+        // if migration didn't populate cache, ensure we load any existing IDB data
+        if (!UPLOAD_CACHE || (UPLOAD_CACHE.gallery.length===0 && UPLOAD_CACHE.songs.length===0 && UPLOAD_CACHE.achievements.length===0)) {
+            await loadCacheFromIndexedDB();
+        }
+    } catch (e) {
+        console.error('IndexedDB init error', e);
+    }
+})();
+
+
+// FUNGSI BARU: Update data yang sudah ada
+
+        function updateSharedData(key, index, updatedItem) {
+            try {
+                const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
+                const sharedData = sharedDataJson ? JSON.parse(sharedDataJson) : {
+                    gallery: [],
+                    songs: [],
+                    achievements: []
+                };
+                
+                if (sharedData[key] && sharedData[key][index]) {
+                    sharedData[key][index] = updatedItem;
+                    localStorage.setItem(SHARED_DATA_KEY, JSON.stringify(sharedData));
+                    notifyDataUpdate(key);
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error updating shared data:', error);
+                return false;
+            }
+        }
+
+        // FUNGSI BARU: Hapus data
+        function deleteSharedData(key, index) {
+            try {
+                const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
+                const sharedData = sharedDataJson ? JSON.parse(sharedDataJson) : {
+                    gallery: [],
+                    songs: [],
+                    achievements: []
+                };
+                
+                if (sharedData[key] && sharedData[key][index]) {
+                    sharedData[key].splice(index, 1);
+                    localStorage.setItem(SHARED_DATA_KEY, JSON.stringify(sharedData));
+                    notifyDataUpdate(key);
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error deleting shared data:', error);
+                return false;
+            }
+        }
+        
+        // PERBAIKAN: Fungsi untuk mendapatkan semua data (gabungan default + shared)
         function getAllData() {
             try {
                 const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
                 if (sharedDataJson) {
                     const sharedData = JSON.parse(sharedDataJson);
                     
+                    // Data default selalu ditampilkan, data upload dibatasi
                     return {
                         gallery: [...defaultData.gallery, ...(sharedData.gallery || [])],
                         songs: [...defaultData.songs, ...(sharedData.songs || [])],
@@ -707,28 +1060,23 @@
             
             return defaultData;
         }
-        
-        // Fungsi untuk menyimpan data ke shared storage
-        function saveSharedData(key, newItem) {
+
+        // FUNGSI BARU: Get hanya data upload (untuk edit/hapus)
+        function getUploadData() {
             try {
                 const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
-                const sharedData = sharedDataJson ? JSON.parse(sharedDataJson) : {
+                return sharedDataJson ? JSON.parse(sharedDataJson) : {
                     gallery: [],
                     songs: [],
                     achievements: []
                 };
-                
-                if (!sharedData[key]) sharedData[key] = [];
-                sharedData[key].push(newItem);
-                
-                localStorage.setItem(SHARED_DATA_KEY, JSON.stringify(sharedData));
-                
-                notifyDataUpdate(key);
-                
-                return true;
             } catch (error) {
-                console.error('Error saving shared data:', error);
-                return false;
+                console.error('Error loading upload data:', error);
+                return {
+                    gallery: [],
+                    songs: [],
+                    achievements: []
+                };
             }
         }
         
@@ -765,6 +1113,7 @@
                 if (now - parseInt(lastUpdate) > fiveMinutes) {
                     loadGallery();
                     loadAchievements();
+                    loadManageData(); // BARU: Refresh data manage
                     localStorage.setItem('last_data_update', now.toString());
                 }
             }
@@ -812,6 +1161,12 @@
         const achievementTitleInput = document.getElementById('achievement-title');
         const achievementDescInput = document.getElementById('achievement-desc');
         const addAchievementBtn = document.getElementById('add-achievement-btn');
+        const songUploadLoading = document.getElementById('song-upload-loading');
+
+        // Elemen BARU untuk manage data
+        const manageGalleryContainer = document.getElementById('manage-gallery-container');
+        const manageSongsContainer = document.getElementById('manage-songs-container');
+        const manageAchievementsContainer = document.getElementById('manage-achievements-container');
 
         // Kontainer untuk konten dinamis
         const galleryContainer = document.getElementById('gallery-container');
@@ -819,7 +1174,7 @@
 
         let isPlaying = false;
         let currentSongIndex = 0;
-        let fadeInterval; // Untuk menyimpan interval fade audio
+        let fadeInterval;
 
         // ===========================================
         // KONFIGURASI ADMIN
@@ -873,7 +1228,6 @@
 
         // Fungsi untuk memuat tema dari localStorage
         function loadTheme() {
-            // Pastikan tema default adalah dark
             const savedTheme = localStorage.getItem('theme') || 'dark';
             if (savedTheme === 'light') {
                 document.body.classList.add('light-mode');
@@ -881,7 +1235,7 @@
             } else {
                 document.body.classList.remove('light-mode');
                 themeIcon.setAttribute('data-lucide', 'moon');
-                localStorage.setItem('theme', 'dark'); // Pastikan tersimpan sebagai dark
+                localStorage.setItem('theme', 'dark');
             }
             lucide.createIcons();
         }
@@ -923,7 +1277,6 @@
                 galleryItem.setAttribute('data-src', item.src);
                 galleryItem.setAttribute('data-caption', item.title);
                 
-                // PERBAIKAN: Ganti bg-[#1C2331] dengan bg-gray-900 agar bisa di-override oleh CSS light mode
                 galleryItem.innerHTML = `
                     <img src="${item.src}" 
                          alt="${item.title}" 
@@ -971,12 +1324,273 @@
         }
 
         // =====================================
+        // FUNGSI BARU: KELOLA DATA (EDIT/HAPUS)
+        // =====================================
+
+        function loadManageData() {
+            const uploadData = getUploadData();
+            
+            // Load Manage Gallery
+            manageGalleryContainer.innerHTML = '';
+            if (uploadData.gallery.length === 0) {
+                manageGalleryContainer.innerHTML = '<p class="text-gray-400 text-center">Belum ada foto yang diupload</p>';
+            } else {
+                uploadData.gallery.forEach((item, index) => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'flex items-center justify-between p-3 bg-gray-800 rounded-lg';
+                    galleryItem.innerHTML = `
+                        <div class="flex items-center space-x-3 flex-1">
+                            <img src="${item.src}" alt="${item.title}" class="w-12 h-12 object-cover rounded">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-white truncate">${item.title}</h4>
+                                <p class="text-sm text-gray-400 truncate">${item.description}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-btn px-3 py-1 rounded text-sm font-medium edit-gallery-btn" data-index="${index}">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                            <button class="delete-btn px-3 py-1 rounded text-sm font-medium delete-gallery-btn" data-index="${index}">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
+                    manageGalleryContainer.appendChild(galleryItem);
+                });
+            }
+
+            // Load Manage Songs
+            manageSongsContainer.innerHTML = '';
+            if (uploadData.songs.length === 0) {
+                manageSongsContainer.innerHTML = '<p class="text-gray-400 text-center">Belum ada lagu yang diupload</p>';
+            } else {
+                uploadData.songs.forEach((item, index) => {
+                    const songItem = document.createElement('div');
+                    songItem.className = 'flex items-center justify-between p-3 bg-gray-800 rounded-lg';
+                    songItem.innerHTML = `
+                        <div class="flex items-center space-x-3 flex-1">
+                            <i data-lucide="music" class="w-8 h-8 text-accent-gold"></i>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-white truncate">${item.title}</h4>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-btn px-3 py-1 rounded text-sm font-medium edit-song-btn" data-index="${index}">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                            <button class="delete-btn px-3 py-1 rounded text-sm font-medium delete-song-btn" data-index="${index}">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
+                    manageSongsContainer.appendChild(songItem);
+                });
+            }
+
+            // Load Manage Achievements
+            manageAchievementsContainer.innerHTML = '';
+            if (uploadData.achievements.length === 0) {
+                manageAchievementsContainer.innerHTML = '<p class="text-gray-400 text-center">Belum ada prestasi yang diupload</p>';
+            } else {
+                uploadData.achievements.forEach((item, index) => {
+                    const achievementItem = document.createElement('div');
+                    achievementItem.className = 'flex items-center justify-between p-3 bg-gray-800 rounded-lg';
+                    achievementItem.innerHTML = `
+                        <div class="flex items-center space-x-3 flex-1">
+                            <i data-lucide="award" class="w-8 h-8 text-accent-gold"></i>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-white truncate">${item.title}</h4>
+                                <p class="text-sm text-gray-400 truncate">${item.description}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-btn px-3 py-1 rounded text-sm font-medium edit-achievement-btn" data-index="${index}">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                            <button class="delete-btn px-3 py-1 rounded text-sm font-medium delete-achievement-btn" data-index="${index}">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
+                    manageAchievementsContainer.appendChild(achievementItem);
+                });
+            }
+
+            lucide.createIcons();
+            attachManageEventListeners();
+        }
+
+        // Fungsi untuk attach event listeners ke tombol edit/hapus
+        function attachManageEventListeners() {
+            // Edit Gallery
+            document.querySelectorAll('.edit-gallery-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
+                    editGalleryItem(index);
+                });
+            });
+
+            // Delete Gallery
+            document.querySelectorAll('.delete-gallery-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
+                    deleteGalleryItem(index);
+                });
+            });
+
+            // Edit Song
+            document.querySelectorAll('.edit-song-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
+                    editSongItem(index);
+                });
+            });
+
+            // Delete Song
+            document.querySelectorAll('.delete-song-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
+                    deleteSongItem(index);
+                });
+            });
+
+            // Edit Achievement
+            document.querySelectorAll('.edit-achievement-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
+                    editAchievementItem(index);
+                });
+            });
+
+            // Delete Achievement
+            document.querySelectorAll('.delete-achievement-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
+                    deleteAchievementItem(index);
+                });
+            });
+        }
+
+        // Fungsi Edit Gallery
+        function editGalleryItem(index) {
+            const uploadData = getUploadData();
+            const item = uploadData.gallery[index];
+            
+            const newTitle = prompt('Edit judul foto:', item.title);
+            if (newTitle === null) return;
+            
+            const newDesc = prompt('Edit deskripsi foto:', item.description);
+            if (newDesc === null) return;
+            
+            const updatedItem = {
+                ...item,
+                title: newTitle.trim(),
+                description: newDesc.trim()
+            };
+            
+            if (updateSharedData('gallery', index, updatedItem)) {
+                loadGallery();
+                loadManageData();
+                alertMessage('Foto berhasil diedit!', 'info');
+            } else {
+                alertMessage('Gagal mengedit foto', 'warning');
+            }
+        }
+
+        // Fungsi Delete Gallery
+        function deleteGalleryItem(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
+                if (deleteSharedData('gallery', index)) {
+                    loadGallery();
+                    loadManageData();
+                    alertMessage('Foto berhasil dihapus!', 'info');
+                } else {
+                    alertMessage('Gagal menghapus foto', 'warning');
+                }
+            }
+        }
+
+        // Fungsi Edit Song
+        function editSongItem(index) {
+            const uploadData = getUploadData();
+            const item = uploadData.songs[index];
+            
+            const newTitle = prompt('Edit judul lagu:', item.title);
+            if (newTitle === null) return;
+            
+            const updatedItem = {
+                ...item,
+                title: newTitle.trim()
+            };
+            
+            if (updateSharedData('songs', index, updatedItem)) {
+                renderPlaylist();
+                loadManageData();
+                alertMessage('Lagu berhasil diedit!', 'info');
+            } else {
+                alertMessage('Gagal mengedit lagu', 'warning');
+            }
+        }
+
+        // Fungsi Delete Song
+        function deleteSongItem(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus lagu ini?')) {
+                if (deleteSharedData('songs', index)) {
+                    renderPlaylist();
+                    loadManageData();
+                    alertMessage('Lagu berhasil dihapus!', 'info');
+                } else {
+                    alertMessage('Gagal menghapus lagu', 'warning');
+                }
+            }
+        }
+
+        // Fungsi Edit Achievement
+        function editAchievementItem(index) {
+            const uploadData = getUploadData();
+            const item = uploadData.achievements[index];
+            
+            const newTitle = prompt('Edit judul prestasi:', item.title);
+            if (newTitle === null) return;
+            
+            const newDesc = prompt('Edit deskripsi prestasi:', item.description);
+            if (newDesc === null) return;
+            
+            const updatedItem = {
+                ...item,
+                title: newTitle.trim(),
+                description: newDesc.trim()
+            };
+            
+            if (updateSharedData('achievements', index, updatedItem)) {
+                loadAchievements();
+                loadManageData();
+                alertMessage('Prestasi berhasil diedit!', 'info');
+            } else {
+                alertMessage('Gagal mengedit prestasi', 'warning');
+            }
+        }
+
+        // Fungsi Delete Achievement
+        function deleteAchievementItem(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus prestasi ini?')) {
+                if (deleteSharedData('achievements', index)) {
+                    loadAchievements();
+                    loadManageData();
+                    alertMessage('Prestasi berhasil dihapus!', 'info');
+                } else {
+                    alertMessage('Gagal menghapus prestasi', 'warning');
+                }
+            }
+        }
+
+        // =====================================
         // LOGIC MULTI-TRACK AUDIO PLAYER - DIPERBAIKI
         // =====================================
 
         // PERBAIKAN: Fungsi fade in audio
         function fadeInAudio() {
-            clearInterval(fadeInterval); // Hapus interval fade sebelumnya
+            clearInterval(fadeInterval);
             if (audio.volume >= 0.9) {
                 audio.volume = 1;
                 return;
@@ -990,12 +1604,12 @@
                 } else {
                     audio.volume = newVolume;
                 }
-            }, 50); // Fade in selama 500ms
+            }, 50);
         }
 
         // PERBAIKAN: Fungsi fade out audio (dengan callback)
         function fadeOutAudio(callback) {
-            clearInterval(fadeInterval); // Hapus interval fade sebelumnya
+            clearInterval(fadeInterval);
             if (audio.volume <= 0.1) {
                 audio.volume = 0;
                 if (callback) callback();
@@ -1010,7 +1624,7 @@
                 } else {
                     audio.volume = newVolume;
                 }
-            }, 50); // Fade out selama 500ms
+            }, 50);
         }
 
         // PERBAIKAN: Fungsi update UI ikon dengan transisi
@@ -1024,38 +1638,29 @@
             }
 
             const iconName = isPlaying ? 'pause' : 'play';
-            const currentSvg = miniPlayer.querySelector('svg'); // Lucide creates <svg>
+            const currentSvg = miniPlayer.querySelector('svg');
 
-            // 1. Fade out ikon saat ini
             if (currentSvg) {
                 currentSvg.style.opacity = '0';
                 currentSvg.style.transform = 'scale(0.7)';
             }
 
-            // 2. Tunggu fade out selesai, lalu ganti ikon
             setTimeout(() => {
-                // Set <i> tag template yang akan dibaca Lucide
                 miniPlayer.innerHTML = `<i data-lucide="${iconName}" class="mini-player-icon"></i>`;
                 
-                // Panggil renderPlaylist, yang di dalamnya akan memanggil lucide.createIcons()
-                // Ini akan me-render ikon playlist DAN ikon mini-player
                 renderPlaylist(); 
                 
-                // 3. Cari SVG baru yang dibuat oleh Lucide
                 const newSvg = miniPlayer.querySelector('svg');
                 if (newSvg) {
-                    // 4. Set state awal (untuk fade-in)
                     newSvg.style.opacity = '0';
                     newSvg.style.transform = 'scale(0.7)';
                     
-                    // 5. Paksa browser render state awal
-                    void newSvg.offsetWidth; 
+                    void newSvg.offsetWidth;
                     
-                    // 6. Animasikan ke state akhir (fade-in)
                     newSvg.style.opacity = '1';
                     newSvg.style.transform = 'scale(1)';
                 }
-            }, currentSvg ? 150 : 0); // Tunggu 150ms jika ada ikon, jika tidak, langsung ganti
+            }, currentSvg ? 150 : 0);
         }
 
         // PERBAIKAN: loadSong dengan fade out
@@ -1069,21 +1674,18 @@
                 const loadAndPlay = () => {
                     audio.src = songs[currentSongIndex].url;
                     audio.load();
-                    // Update UI (tanpa transisi ikon, karena playAudio akan memicunya)
                     const iconTag = miniPlayer.querySelector('i');
                     if(iconTag) iconTag.setAttribute('data-lucide', shouldPlay ? 'pause' : 'play');
                     renderPlaylist();
 
                     if (shouldPlay) {
-                        playAudio(); // playAudio akan menangani fade-in
+                        playAudio();
                     }
                 };
                 
-                // Jika sedang diputar, fade out dulu
                 if (isPlaying) {
                     fadeOutAudio(loadAndPlay);
                 } else {
-                    // Jika tidak diputar, langsung load
                     loadAndPlay();
                 }
             }
@@ -1091,15 +1693,14 @@
 
         // PERBAIKAN: playAudio dengan fade in
         function playAudio() {
-            // Set volume 0 sebelum play
-            audio.volume = 0; 
+            audio.volume = 0;
             const playPromise = audio.play();
             
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     isPlaying = true;
-                    updatePlayerUI(); // Panggil update UI (dengan transisi ikon)
-                    fadeInAudio(); // Mulai fade in
+                    updatePlayerUI();
+                    fadeInAudio();
                 }).catch(error => {
                     audio.pause();
                     isPlaying = false;
@@ -1113,10 +1714,9 @@
         // PERBAIKAN: pauseAudio dengan fade out
         function pauseAudio() {
             fadeOutAudio(() => {
-                // Setelah fade out, baru pause
-                audio.pause(); 
+                audio.pause();
                 isPlaying = false;
-                updatePlayerUI(); // Panggil update UI (dengan transisi ikon)
+                updatePlayerUI();
             });
         }
 
@@ -1124,7 +1724,6 @@
             const data = getAllData();
             const songs = data.songs;
             let newIndex = (currentSongIndex + 1) % songs.length;
-            // 'isPlaying' akan menentukan apakah loadSong harus fade out dulu
             loadSong(newIndex, isPlaying);
         }
 
@@ -1204,8 +1803,6 @@
                 playlistContainer.appendChild(listItem);
             });
             
-            // Panggil createIcons untuk me-render ikon di playlist
-            // DAN ikon di mini-player (jika dipanggil oleh updatePlayerUI)
             lucide.createIcons();
         }
 
@@ -1218,6 +1815,7 @@
             const isLoggedIn = localStorage.getItem('brigpasnesaga_admin_loggedin') === 'true';
             if (isLoggedIn) {
                 showAdminPanel();
+                loadManageData(); // BARU: Load data manage saat login
             }
             return isLoggedIn;
         }
@@ -1242,6 +1840,7 @@
             if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
                 localStorage.setItem('brigpasnesaga_admin_loggedin', 'true');
                 showAdminPanel();
+                loadManageData(); // BARU: Load data manage
                 alertMessage("Login berhasil! Selamat datang di panel admin.", "info");
             } else {
                 alertMessage("Username atau password salah.", "warning");
@@ -1257,7 +1856,7 @@
             alertMessage("Anda telah logout dari panel admin.", "info");
         }
 
-        // Fungsi untuk menambah foto galeri
+        // PERBAIKAN: Fungsi untuk menambah foto galeri - TANPA BATASAN UKURAN
         function addGalleryImage() {
             const imageFile = galleryImageFileInput.files[0];
             const imageTitle = galleryImageTitleInput.value.trim();
@@ -1265,11 +1864,6 @@
             
             if (!imageFile || !imageTitle) {
                 alertMessage("File foto dan judul harus diisi.", "warning");
-                return;
-            }
-            
-            if (imageFile.size > 5 * 1024 * 1024) {
-                alertMessage("Ukuran file foto terlalu besar. Maksimal 5MB.", "warning");
                 return;
             }
             
@@ -1289,6 +1883,7 @@
                     galleryImageDescInput.value = '';
                     
                     loadGallery();
+                    loadManageData(); // BARU: Refresh manage data
                     alertMessage("Foto berhasil ditambahkan ke galeri! Semua pengunjung bisa melihatnya.", "info");
                 } else {
                     alertMessage("Gagal menyimpan foto.", "warning");
@@ -1297,7 +1892,7 @@
             reader.readAsDataURL(imageFile);
         }
 
-        // Fungsi untuk menambah lagu
+        // PERBAIKAN: Fungsi untuk menambah lagu - DIPERBAIKI LAGI
         function addSong() {
             const songFile = songFileInput.files[0];
             const songTitle = songTitleInput.value.trim();
@@ -1307,31 +1902,108 @@
                 return;
             }
             
-            if (songFile.size > 5 * 1024 * 1024) {
-                alertMessage("Ukuran file lagu terlalu besar. Maksimal 5MB.", "warning");
+            // Validasi format file yang lebih longgar
+            const allowedTypes = [
+                'audio/mpeg', 
+                'audio/wav', 
+                'audio/webm', 
+                'audio/ogg', 
+                'audio/mp3', 
+                'audio/x-m4a',
+                'audio/aac',
+                'audio/x-wav'
+            ];
+            
+            const fileExtension = songFile.name.toLowerCase().split('.').pop();
+            const allowedExtensions = ['mp3', 'wav', 'webm', 'ogg', 'm4a', 'aac'];
+            
+            if (!allowedTypes.includes(songFile.type) && !allowedExtensions.includes(fileExtension)) {
+                alertMessage(`Format file tidak didukung. Gunakan MP3, WAV, WEBM, atau OGG. File Anda: ${songFile.type}`, "warning");
                 return;
             }
             
+            console.log("File info:", {
+                name: songFile.name,
+                type: songFile.type,
+                size: songFile.size,
+                extension: fileExtension
+            });
+            
+            // Tampilkan loading state
+            addSongBtn.disabled = true;
+            addSongBtn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Mengupload...</span>';
+            lucide.createIcons();
+            songUploadLoading.classList.add('spinning');
+            
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                const newSong = {
-                    url: e.target.result, // data URL
-                    title: songTitle
-                };
+                console.log("FileReader berhasil, data length:", e.target.result.length);
                 
-                const success = saveSharedData('songs', newSong);
-                
-                if (success) {
-                    songFileInput.value = '';
-                    songTitleInput.value = '';
+                try {
+                    const newSong = {
+                        url: e.target.result,
+                        title: songTitle
+                    };
                     
-                    renderPlaylist();
-                    alertMessage("Lagu berhasil ditambahkan ke playlist! Semua pengunjung bisa mendengarnya.", "info");
-                } else {
-                    alertMessage("Gagal menyimpan lagu.", "warning");
+                    console.log("Menyimpan lagu ke shared data...");
+                    const success = saveSharedData('songs', newSong);
+                    
+                    // Reset state
+                    addSongBtn.disabled = false;
+                    addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
+                    lucide.createIcons();
+                    songUploadLoading.classList.remove('spinning');
+                    
+                    if (success) {
+                        songFileInput.value = '';
+                        songTitleInput.value = '';
+                        
+                        renderPlaylist();
+                        loadManageData();
+                        alertMessage("Lagu berhasil ditambahkan ke playlist! Semua pengunjung bisa mendengarnya.", "info");
+                    } else {
+                        // silent fail
+console.warn("Gagal menyimpan lagu (silent).");
+                    }
+                } catch (error) {
+                    console.error("Error dalam proses save:", error);
+                    addSongBtn.disabled = false;
+                    addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
+                    lucide.createIcons();
+                    songUploadLoading.classList.remove('spinning');
+                    alertMessage("Terjadi error saat menyimpan lagu: " + error.message, "warning");
                 }
             };
-            reader.readAsDataURL(songFile);
+            
+            reader.onerror = function(error) {
+                console.error("FileReader error:", error);
+                // Reset state jika error
+                addSongBtn.disabled = false;
+                addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
+                lucide.createIcons();
+                songUploadLoading.classList.remove('spinning');
+                alertMessage("Gagal membaca file lagu. File mungkin rusak atau terlalu besar.", "warning");
+            };
+            
+            reader.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    console.log(`Upload progress: ${percent}%`);
+                }
+            };
+            
+            // Coba baca sebagai data URL
+            try {
+                reader.readAsDataURL(songFile);
+            } catch (error) {
+                console.error("Error membaca file:", error);
+                addSongBtn.disabled = false;
+                addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
+                lucide.createIcons();
+                songUploadLoading.classList.remove('spinning');
+                alertMessage("Tidak bisa membaca file. Coba file lain.", "warning");
+            }
         }
 
         // Fungsi untuk menambah prestasi
@@ -1356,6 +2028,7 @@
                 achievementDescInput.value = '';
                 
                 loadAchievements();
+                loadManageData(); // BARU: Refresh manage data
                 alertMessage("Prestasi berhasil ditambahkan! Semua pengunjung bisa melihatnya.", "info");
             } else {
                 alertMessage("Gagal menyimpan prestasi.", "warning");
@@ -1421,7 +2094,6 @@
             feedbackInput.value = '';
         });
 
-
         // Tutup modal saat tombol X diklik
         closeModalBtn.addEventListener('click', closeModal);
 
@@ -1480,8 +2152,7 @@
             const songs = data.songs;
             
             if (songs.length > 0) {
-                loadSong(0); // Hanya load, tidak auto-play
-                // Update UI awal
+                loadSong(0);
                 const iconTag = miniPlayer.querySelector('i');
                 if(iconTag) iconTag.setAttribute('data-lucide', 'play');
                 renderPlaylist();
@@ -1494,7 +2165,7 @@
             // Periksa status login admin
             checkAdminLoginStatus();
             
-            // Load tema - PASTIKAN DARK THEME DEFAULT
+            // Load tema
             loadTheme();
         };
         
@@ -1503,5 +2174,4 @@
         
     </script>
 </body>
-</html>
-
+            </html>

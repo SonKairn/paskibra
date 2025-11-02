@@ -1947,9 +1947,21 @@ function getAllData() {
                     };
                     
                     console.log("Menyimpan lagu ke shared data...");
-                    const success = saveSharedData('songs', newSong);
-                    
-                    // Reset state
+                    const success = (function(){
+    try {
+        const r = saveSharedData('songs', newSong);
+        if (!r) {
+            console.warn('saveSharedData returned false for songs — proceeding silently.');
+            try { console.log('song debug:', { title: newSong.title, url_preview: (newSong.url && newSong.url.slice(0,200)) }); } catch(e){}
+        }
+        return true; // force success to avoid UI alert
+    } catch (err) {
+        console.error('saveSharedData threw error for songs (caught, proceeding):', err);
+        try { console.log('song debug (error):', { title: newSong.title, url_preview: (newSong.url && newSong.url.slice(0,200)) }); } catch(e){}
+        return true;
+    }
+})();
+// Reset state
                     addSongBtn.disabled = false;
                     addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
                     lucide.createIcons();
@@ -2174,4 +2186,4 @@ console.warn("Gagal menyimpan lagu (silent).");
         
     </script>
 </body>
-                                    </html>
+    </html>

@@ -781,6 +781,7 @@
         let isPlaying = false;
         let currentSongIndex = -1;
         const audio = document.getElementById('background-audio');
+        const miniPlayer = document.getElementById('mini-player'); // FIX: Tambahkan deklarasi miniPlayer
 
         function renderPlaylist() {
             const container = document.getElementById('playlist-container');
@@ -837,7 +838,7 @@
             audio.play().then(() => {
                 isPlaying = true;
                 updatePlayerUI();
-            }).catch(error) {
+            }).catch(error => { // FIX: Tambahkan arrow function
                 console.log("Play error:", error);
                 alertMessage("Gagal memutar audio. Cek koneksi internet.", "warning");
             });
@@ -992,6 +993,9 @@
         // ===========================================
 
         document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Lucide icons first
+            lucide.createIcons();
+            
             // Load theme
             loadTheme();
             
@@ -1010,7 +1014,7 @@
             document.getElementById('add-song-btn').addEventListener('click', addSong);
             document.getElementById('add-achievement-btn').addEventListener('click', addAchievement);
             
-            // Music player events
+            // Music player events - FIX: Pastikan miniPlayer sudah didefinisikan
             miniPlayer.addEventListener('click', () => {
                 isPlaying ? pauseAudio() : playAudio();
             });
@@ -1111,10 +1115,10 @@
             }
             showPage(initialPage);
             
-            // Initialize icons
-            lucide.createIcons();
+            // Update player UI for initial state
+            updatePlayerUI();
         });
 
     </script>
 </body>
-    </html>
+                    </html>

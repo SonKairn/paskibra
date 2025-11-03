@@ -781,7 +781,7 @@
         let isPlaying = false;
         let currentSongIndex = -1;
         const audio = document.getElementById('background-audio');
-        const miniPlayer = document.getElementById('mini-player'); // FIX: Tambahkan deklarasi miniPlayer
+        const miniPlayer = document.getElementById('mini-player');
 
         function renderPlaylist() {
             const container = document.getElementById('playlist-container');
@@ -838,7 +838,7 @@
             audio.play().then(() => {
                 isPlaying = true;
                 updatePlayerUI();
-            }).catch(error => { // FIX: Tambahkan arrow function
+            }).catch(error => {
                 console.log("Play error:", error);
                 alertMessage("Gagal memutar audio. Cek koneksi internet.", "warning");
             });
@@ -964,6 +964,8 @@
                 themeIcon.setAttribute('data-lucide', 'moon');
                 localStorage.setItem('theme', 'dark');
             }
+            
+            lucide.createIcons();
         }
 
         function showPage(pageId) {
@@ -989,7 +991,7 @@
         }
 
         // ===========================================
-        // INITIALIZATION
+        // INITIALIZATION - FIXED VERSION
         // ===========================================
 
         document.addEventListener('DOMContentLoaded', async function() {
@@ -1014,12 +1016,16 @@
             document.getElementById('add-song-btn').addEventListener('click', addSong);
             document.getElementById('add-achievement-btn').addEventListener('click', addAchievement);
             
-            // Music player events - FIX: Pastikan miniPlayer sudah didefinisikan
-            miniPlayer.addEventListener('click', () => {
-                isPlaying ? pauseAudio() : playAudio();
+            // Music player events - FIXED: Use proper function reference
+            miniPlayer.addEventListener('click', function() {
+                if (isPlaying) {
+                    pauseAudio();
+                } else {
+                    playAudio();
+                }
             });
 
-            audio.addEventListener('ended', () => {
+            audio.addEventListener('ended', function() {
                 const data = [...defaultData.songs, ...appData.songs];
                 if (data.length > 0) {
                     let newIndex = (currentSongIndex + 1) % data.length;
@@ -1033,7 +1039,7 @@
                 password: "ADMINBRIGPAS" 
             };
             
-            document.getElementById('admin-login-btn').addEventListener('click', () => {
+            document.getElementById('admin-login-btn').addEventListener('click', function() {
                 const username = document.getElementById('admin-username').value;
                 const password = document.getElementById('admin-password').value;
                 
@@ -1046,7 +1052,7 @@
                 }
             });
 
-            document.getElementById('admin-logout-btn').addEventListener('click', () => {
+            document.getElementById('admin-logout-btn').addEventListener('click', function() {
                 document.getElementById('admin-login-form').classList.remove('hidden');
                 document.getElementById('admin-panel').classList.add('hidden');
                 document.getElementById('admin-username').value = '';
@@ -1057,10 +1063,10 @@
             // Theme toggle
             document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
             
-            // Navigation
+            // Navigation - FIXED: Use proper function reference
             document.querySelectorAll('.bottom-nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const pageId = item.getAttribute('data-page');
+                item.addEventListener('click', function() {
+                    const pageId = this.getAttribute('data-page');
                     showPage(pageId);
                     history.pushState(null, '', `#${pageId}`);
                 });
@@ -1072,14 +1078,14 @@
             
             // Image modal
             document.getElementById('close-modal-btn').addEventListener('click', closeModal);
-            document.getElementById('image-modal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('image-modal')) {
+            document.getElementById('image-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
                     closeModal();
                 }
             });
 
             // WhatsApp feedback
-            document.getElementById('send-whatsapp-btn').addEventListener('click', () => {
+            document.getElementById('send-whatsapp-btn').addEventListener('click', function() {
                 const feedback = document.getElementById('feedback-input').value.trim();
                 const adminWhatsappNumber = "6283159696918";
                 
@@ -1097,7 +1103,7 @@
             });
 
             // Close modals with ESC key
-            document.addEventListener('keydown', (e) => {
+            document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     if (!document.getElementById('image-modal').classList.contains('hidden')) {
                         closeModal();
@@ -1117,8 +1123,13 @@
             
             // Update player UI for initial state
             updatePlayerUI();
+            
+            // Re-initialize icons after all content is loaded
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
         });
 
     </script>
 </body>
-                    </html>
+    </html>

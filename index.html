@@ -6,9 +6,14 @@
     <title>BRIGPASNESAGA | Paskibra SMP Negeri 1 Gabuswetan</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* CSS Styles */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #1C2331;
@@ -24,6 +29,7 @@
             opacity: 0; 
             transform: translateY(10px); 
             transition: opacity 0.5s ease-out, transform 0.5s ease-out; 
+            min-height: 70vh;
         }
         .page-content.active {
             display: block;
@@ -32,17 +38,9 @@
         }
         .text-accent-gold {
             color: #D4AF37;
-            text-shadow: 0 0 5px rgba(212, 175, 55, 0.3); 
-        }
-        .light-mode .text-accent-gold {
-            color: #B8860B;
         }
         .text-accent-crimson {
             color: #A52A2A;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); 
-        }
-        .light-mode .text-accent-crimson {
-            color: #8B0000;
         }
         .bg-card-dark {
             background-color: #283241; 
@@ -51,8 +49,6 @@
         .light-mode .bg-card-dark {
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            color: #333333;
         }
         .bg-card-dark-highlight {
             background-color: #3A4557;
@@ -61,22 +57,7 @@
         .light-mode .bg-card-dark-highlight {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
-            color: #333333;
         }
-        .dark-table-header {
-            background-color: #3A4557;
-        }
-        .light-mode .dark-table-header {
-            background-color: #f9fafb;
-        }
-        .light-mode th {
-            color: #333333;
-        }
-        .light-mode td {
-            color: #444444;
-            border-color: #e5e7eb;
-        }
-        
         .mini-player {
             position: fixed;
             bottom: 80px;
@@ -106,14 +87,6 @@
             width: 24px;
             height: 24px;
         }
-        
-        .mini-player svg {
-            color: white;
-            width: 24px;
-            height: 24px;
-            transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
-        }
-
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -144,12 +117,19 @@
             transition: all 0.2s ease;
             flex: 1;
             max-width: 20%;
+            cursor: pointer;
+            color: #E0E6F0;
+        }
+        .light-mode .bottom-nav-item {
+            color: #333333;
         }
         .bottom-nav-item.active {
             background-color: #A52A2A;
+            color: white !important;
         }
         .light-mode .bottom-nav-item.active {
             background-color: #8B0000;
+            color: white !important;
         }
         .bottom-nav-icon {
             width: 1.5rem;
@@ -160,7 +140,6 @@
             font-size: 0.75rem;
             text-align: center;
         }
-        
         .modal-backdrop {
             background-color: rgba(0, 0, 0, 0.85);
             transition: opacity 0.3s ease;
@@ -170,7 +149,6 @@
             max-height: 90vh;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
-        
         .sync-notification {
             position: fixed;
             top: 80px;
@@ -187,45 +165,6 @@
             background: #B8860B;
             color: #ffffff;
         }
-        
-        .light-mode .border-gray-700 {
-            border-color: #e5e7eb !important;
-        }
-        .light-mode .border-gray-600 {
-            border-color: #d1d5db !important;
-        }
-        .light-mode .bg-gray-700 {
-            background-color: #f3f4f6 !important;
-            color: #333333 !important;
-        }
-        .light-mode .bg-gray-900 {
-            background-color: #ffffff !important;
-            border-color: #e5e7eb !important;
-        }
-        .light-mode .bg-gray-950 {
-            background-color: #f9fafb !important;
-            border-color: #e5e7eb !important;
-        }
-        .light-mode .placeholder-gray-400::placeholder {
-            color: #9ca3af !important;
-        }
-        .light-mode .text-gray-100 {
-            color: #333333 !important;
-        }
-        .light-mode .text-gray-200 {
-            color: #333333 !important;
-        }
-        .light-mode .text-gray-300 {
-            color: #444444 !important;
-        }
-        .light-mode .text-gray-400 {
-            color: #555555 !important;
-        }
-        .light-mode .text-gray-500 {
-            color: #666666 !important;
-        }
-
-        /* Loading spinner untuk upload */
         .upload-loading {
             display: none;
             text-align: center;
@@ -247,8 +186,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* Tombol edit/hapus */
         .edit-btn {
             background: #D4AF37;
             color: #1C2331;
@@ -272,7 +209,7 @@
         <span id="sync-message">Data diperbarui!</span>
     </div>
 
-    <!-- HEADER & TOMBOL MENU -->
+    <!-- HEADER -->
     <header class="bg-gray-900 shadow-xl sticky top-0 z-50 border-b border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -281,12 +218,10 @@
                     <span class="text-xl font-medium text-gray-400 ml-2 hidden sm:inline-block">SMPN 1 Gabuswetan</span> 
                 </div>
                 <div class="flex items-center space-x-3">
-                    <button id="playlist-open-btn" class="p-2 rounded-md text-gray-300 hover:text-accent-gold hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-gold" title="Buka Playlist">
-                        <span class="sr-only">Buka daftar lagu</span>
+                    <button id="playlist-open-btn" class="p-2 rounded-md text-gray-300 hover:text-accent-gold hover:bg-gray-700">
                         <i data-lucide="list-music" class="w-6 h-6"></i>
                     </button>
-                    <button id="theme-toggle-btn" class="p-2 rounded-md text-gray-300 hover:text-accent-gold hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent-gold" title="Ubah Tema">
-                        <span class="sr-only">Ubah tema</span>
+                    <button id="theme-toggle-btn" class="p-2 rounded-md text-gray-300 hover:text-accent-gold hover:bg-gray-700">
                         <i data-lucide="moon" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -301,7 +236,7 @@
         <section id="home" class="page-content active">
             <div class="bg-card-dark p-6 md:p-10 rounded-xl shadow-lg">
                 <div class="flex flex-col items-center mb-8">
-                    <img src="https://files.catbox.moe/nretmz.jpg" alt="Logo Paskibra Brigpasnesaga" class="w-48 h-48 sm:w-64 sm:h-64 object-cover rounded-full border-4 border-accent-gold shadow-lg mb-6 animate-pulse" />
+                    <img src="https://files.catbox.moe/nretmz.jpg" alt="Logo Paskibra Brigpasnesaga" class="w-48 h-48 sm:w-64 sm:h-64 object-cover rounded-full border-4 border-accent-gold shadow-lg mb-6" />
                     <h1 class="text-3xl md:text-5xl font-extrabold text-accent-gold mb-6 text-center">BRIGPASNESAGA</h1>
                     <p class="text-lg text-gray-400 mb-8 text-center max-w-2xl">
                         Selamat datang di Website Resmi Pasukan Pengibar Bendera SMP Negeri 1 Gabuswetan!
@@ -310,7 +245,7 @@
                 
                 <h2 class="text-2xl font-bold text-accent-crimson mb-3">Brigpas Nesaga</h2>
                 <p class="text-lg text-gray-300 leading-relaxed mb-6">
-                    Brigpas nesaga adalah Singkatan Dari Brigade Paskibra Negeri Satu Gabuswetan. Brigpas Nesaga Berdiri Pada 3 April 2015. Brigpas nesaga Juga Adalah salah satu ekstrakurikuler yang ada di SMPN 1 Gabuswetan yang menjadi opsi untuk membentuk karakter yang disiplin, bermoral. 
+                    Brigpas nesaga adalah Singkatan Dari Brigade Paskibra Negeri Satu Gabuswetan. Brigpas nesaga Adalah salah ekstrakurikuler yang ada di SMPN 1 Gabuswetan yang menjadi opsi untuk membentuk karakter yang disiplin, bermoral. Brigpas Nesaga Di dirikan Pada 23 April 2013.
                 </p>
 
                 <h2 class="text-2xl font-bold text-accent-crimson mb-3">Kegiatan Yang Di lakukan</h2>
@@ -330,10 +265,10 @@
         <section id="galeri" class="page-content">
             <div class="bg-card-dark p-6 md:p-10 rounded-xl shadow-lg">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-accent-gold mb-6">Galeri Kenangan</h1>
-                <p class="text-lg text-gray-400 mb-8">Momen-momen terbaik yang berhasil kami abadikan. Klik foto untuk melihat lebih besar.</p>
+                <p class="text-lg text-gray-400 mb-8">Momen-momen terbaik yang berhasil kami abadikan.</p>
                 
                 <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Foto-foto akan dimuat di sini oleh JavaScript -->
+                    <p class="text-gray-400 col-span-full">Memuat galeri...</p>
                 </div>
             </div>
         </section>
@@ -342,10 +277,9 @@
         <section id="prestasi" class="page-content">
             <div class="bg-card-dark p-6 md:p-10 rounded-xl shadow-lg">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-accent-gold mb-6">Piala dan Prestasi</h1>
-                <p class="text-lg text-gray-400 mb-8">Piala Atau Penghargaan Yang Di Dapatkan Oleh Paskibra Smpn 1 Gabuswetan. Angkatan 11/12.</p>
-
+                <p class="text-lg text-gray-400 mb-8">Piala Atau Penghargaan Yang Di Dapatkan Oleh Paskibra Smpn 1 Gabuswetan.</p>
                 <div id="achievements-container" class="space-y-6">
-                    <!-- Prestasi akan dimuat di sini oleh JavaScript -->
+                    <p class="text-gray-400">Memuat prestasi...</p>
                 </div>
             </div>
         </section>
@@ -355,17 +289,12 @@
             <div class="bg-card-dark p-6 md:p-10 rounded-xl shadow-lg">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-accent-gold mb-6">Struktur Organisasi</h1>
                 <p class="text-lg text-gray-400 mb-8">Pejabat Teras Paskibra SMP Negeri 1 Gabuswetan periode 2025/2026</p>
-
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-700">
                         <thead class="dark-table-header">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                    Jabatan
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                    Nama
-                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Jabatan</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Nama</th>
                             </tr>
                         </thead>
                         <tbody class="bg-card-dark divide-y divide-gray-700">
@@ -389,42 +318,6 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-accent-gold">Wakomsat (Wakil Komandan Satu)</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Naeva</td>
                             </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Sekretaris</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Meisya, Aini</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Bendahara</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Alya, Alodia</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Korlap (Koordinator Lapangan)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Ilham, Kartika</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Kormat (Koordinator Materi)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Adel, Reva</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Keagamaan</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Raihan, Ananda</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Kebersihan</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Niko,Aura,Chantika</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Kesehatan</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Debby,winda,wilda</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Humas (Hubungan Masyarakat)</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Dara,Yunita,Afifah</td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">Dokumentasi</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">Riyan,Fitri,Chantya,Bilqis,Wilis</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -436,7 +329,6 @@
             <div class="bg-card-dark p-6 md:p-10 rounded-xl shadow-lg">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-accent-gold mb-6">Kirim Masukan atau Saran</h1>
                 <p class="text-lg text-gray-400 mb-8">Berikan saran konstruktif Anda untuk kemajuan BRIGPASNESAGA. Masukan akan langsung dikirim ke admin melalui WhatsApp.</p>
-
                 <div class="space-y-4">
                     <label for="feedback-input" class="block text-sm font-medium text-gray-300">Tulis Masukan Anda (Maksimal 500 karakter)</label>
                     <textarea id="feedback-input" rows="6" maxlength="500" class="w-full p-4 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Contoh: Website ini sudah bagus, namun menu Galeri bisa ditambahkan fitur filter tahun."></textarea>
@@ -455,130 +347,79 @@
                 <h1 class="text-3xl md:text-4xl font-extrabold text-accent-gold mb-6">Panel Admin</h1>
                 
                 <!-- Form Login Admin -->
-                <div id="admin-login-form" class="space-y-4 mb-8">
-                    <p class="text-lg text-gray-400 mb-4">Masukkan kredensial admin untuk mengakses panel</p>
-                    
+                <form id="admin-login-form" class="space-y-4 max-w-md mx-auto">
+                    <h2 class="text-xl font-semibold text-center text-gray-300">Login Admin</h2>
                     <div>
-                        <label for="admin-username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
-                        <input type="text" id="admin-username" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition">
+                        <label for="admin-username" class="block text-sm font-medium text-gray-300">Username</label>
+                        <input type="text" id="admin-username" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100">
                     </div>
-                    
                     <div>
-                        <label for="admin-password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
-                        <input type="password" id="admin-password" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition">
+                        <label for="admin-password" class="block text-sm font-medium text-gray-300">Password</label>
+                        <input type="password" id="admin-password" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100">
                     </div>
-                    
-                    <button id="admin-login-btn" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-accent-crimson text-white font-semibold hover:bg-red-700 transition duration-300 flex items-center justify-center space-x-2 shadow-md">
-                        <i data-lucide="log-in" class="w-5 h-5"></i>
-                        <span>Login Admin</span>
+                    <button id="admin-login-btn" type="button" class="w-full px-6 py-3 rounded-xl bg-accent-gold text-gray-900 font-semibold hover:bg-yellow-500 transition duration-300">
+                        Login
                     </button>
-                </div>
-                
-                <!-- Panel Admin (akan ditampilkan setelah login berhasil) -->
+                </form>
+
+                <!-- Panel Admin -->
                 <div id="admin-panel" class="hidden space-y-8">
-                    <!-- Bagian Upload Foto Galeri -->
-                    <div class="bg-card-dark-highlight p-6 rounded-lg">
-                        <h2 class="text-2xl font-bold text-accent-crimson mb-4">Tambah Foto Galeri</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="gallery-image-file" class="block text-sm font-medium text-gray-300 mb-1">Upload Foto</label>
-                                <input type="file" id="gallery-image-file" accept="image/*" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition">
-                                <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, GIF. <strong>Tidak ada batasan ukuran!</strong></p>
-                            </div>
-                            <div>
-                                <label for="gallery-image-title" class="block text-sm font-medium text-gray-300 mb-1">Judul Foto</label>
-                                <input type="text" id="gallery-image-title" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Kegiatan Latihan">
-                            </div>
-                            <div>
-                                <label for="gallery-image-desc" class="block text-sm font-medium text-gray-300 mb-1">Deskripsi Foto</label>
-                                <input type="text" id="gallery-image-desc" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Dokumentasi Kegiatan">
-                            </div>
-                            <button id="add-gallery-image-btn" class="px-4 py-2 rounded-lg bg-accent-crimson text-white font-semibold hover:bg-red-700 transition duration-300 flex items-center space-x-2">
-                                <i data-lucide="image" class="w-5 h-5"></i>
-                                <span>Tambah Foto ke Galeri</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Bagian Upload Lagu -->
-                    <div class="bg-card-dark-highlight p-6 rounded-lg">
-                        <h2 class="text-2xl font-bold text-accent-crimson mb-4">Tambah Lagu ke Playlist</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="song-file" class="block text-sm font-medium text-gray-300 mb-1">File Lagu</label>
-                                <input type="file" id="song-file" accept="audio/*" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition">
-                                <p class="text-xs text-gray-400 mt-1">Format: MP3, WAV, WEBM. <strong>Tidak ada batasan ukuran!</strong></p>
-                            </div>
-                            <div>
-                                <label for="song-title" class="block text-sm font-medium text-gray-300 mb-1">Judul Lagu</label>
-                                <input type="text" id="song-title" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Judul Lagu - Artis">
-                            </div>
-                            <!-- Loading indicator untuk upload lagu -->
-                            <div id="song-upload-loading" class="upload-loading">
-                                <div class="spinner"></div>
-                                <p class="text-sm text-gray-400 mt-2">Mengupload lagu...</p>
-                            </div>
-                            <button id="add-song-btn" class="px-4 py-2 rounded-lg bg-accent-crimson text-white font-semibold hover:bg-red-700 transition duration-300 flex items-center space-x-2">
-                                <i data-lucide="music" class="w-5 h-5"></i>
-                                <span>Tambah Lagu ke Playlist</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Bagian Tambah Prestasi -->
-                    <div class="bg-card-dark-highlight p-6 rounded-lg">
-                        <h2 class="text-2xl font-bold text-accent-crimson mb-4">Tambah Prestasi</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="achievement-title" class="block text-sm font-medium text-gray-300 mb-1">Judul Prestasi</label>
-                                <input type="text" id="achievement-title" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Juara 1 Lomba Baris Berbaris">
-                            </div>
-                            <div>
-                                <label for="achievement-desc" class="block text-sm font-medium text-gray-300 mb-1">Deskripsi Prestasi</label>
-                                <textarea id="achievement-desc" rows="3" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:ring-accent-gold focus:border-accent-gold transition" placeholder="Lomba Keterampilan Baris-Berbaris tingkat Provinsi..."></textarea>
-                            </div>
-                            <button id="add-achievement-btn" class="px-4 py-2 rounded-lg bg-accent-crimson text-white font-semibold hover:bg-red-700 transition duration-300 flex items-center space-x-2">
-                                <i data-lucide="award" class="w-5 h-5"></i>
-                                <span>Tambah Prestasi</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- BAGIAN BARU: Kelola Data -->
-                    <div class="bg-card-dark-highlight p-6 rounded-lg">
-                        <h2 class="text-2xl font-bold text-accent-crimson mb-4">Kelola Data</h2>
-                        
-                        <!-- Kelola Galeri -->
-                        <div class="mb-6">
-                            <h3 class="text-xl font-bold text-accent-gold mb-3">Kelola Foto Galeri</h3>
-                            <div id="manage-gallery-container" class="space-y-3 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-lg">
-                                <!-- Data galeri akan dimuat di sini -->
-                            </div>
-                        </div>
-
-                        <!-- Kelola Lagu -->
-                        <div class="mb-6">
-                            <h3 class="text-xl font-bold text-accent-gold mb-3">Kelola Lagu</h3>
-                            <div id="manage-songs-container" class="space-y-3 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-lg">
-                                <!-- Data lagu akan dimuat di sini -->
-                            </div>
-                        </div>
-
-                        <!-- Kelola Prestasi -->
-                        <div class="mb-6">
-                            <h3 class="text-xl font-bold text-accent-gold mb-3">Kelola Prestasi</h3>
-                            <div id="manage-achievements-container" class="space-y-3 max-h-60 overflow-y-auto p-2 border border-gray-600 rounded-lg">
-                                <!-- Data prestasi akan dimuat di sini -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tombol Logout -->
-                    <div class="flex justify-end">
-                        <button id="admin-logout-btn" class="px-4 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-600 transition duration-300 flex items-center space-x-2">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
-                            <span>Logout Admin</span>
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-semibold text-gray-300">Selamat Datang, Admin!</h2>
+                        <button id="admin-logout-btn" class="px-4 py-2 rounded-lg bg-accent-crimson text-white font-semibold hover:bg-red-700 transition duration-300">
+                            Logout
                         </button>
+                    </div>
+
+                    <!-- Upload Guide -->
+                    <div class="bg-blue-900 border border-blue-700 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-blue-300 mb-2">📝 Cara Upload ke ImgBB:</h3>
+                        <ol class="text-blue-200 text-sm space-y-1 list-decimal list-inside">
+                            <li>Buka <a href="https://imgbb.com" target="_blank" class="underline font-semibold">imgbb.com</a></li>
+                            <li>Klik "Start Uploading"</li>
+                            <li>Pilih file (foto JPG/PNG atau audio MP3)</li>
+                            <li>Tunggu sampai upload selesai</li>
+                            <li>Copy <strong>"Direct URL"</strong></li>
+                            <li>Paste URL di form bawah ini</li>
+                        </ol>
+                        <p class="text-green-300 text-xs mt-2">✅ Gratis! Tidak perlu daftar akun</p>
+                    </div>
+
+                    <!-- Kelola Galeri -->
+                    <div class="p-4 rounded-lg bg-card-dark-highlight border border-gray-700">
+                        <h3 class="text-xl font-bold text-accent-gold mb-4">📸 Tambah Foto Baru</h3>
+                        <div class="space-y-3 mb-4">
+                            <input type="text" id="gallery-image-url" placeholder="Paste URL ImgBB di sini" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <input type="text" id="gallery-image-title" placeholder="Judul Foto" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <input type="text" id="gallery-image-desc" placeholder="Deskripsi Foto" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <button id="add-gallery-image-btn" type="button" class="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition duration-300">
+                                💾 Simpan Foto
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kelola Lagu -->
+                    <div class="p-4 rounded-lg bg-card-dark-highlight border border-gray-700">
+                        <h3 class="text-xl font-bold text-accent-gold mb-4">🎵 Tambah Lagu Baru</h3>
+                        <div class="space-y-3 mb-4">
+                            <input type="text" id="song-url" placeholder="Paste URL ImgBB di sini" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <input type="text" id="song-title" placeholder="Judul Lagu" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <button id="add-song-btn" type="button" class="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition duration-300">
+                                💾 Simpan Lagu
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Kelola Prestasi -->
+                    <div class="p-4 rounded-lg bg-card-dark-highlight border border-gray-700">
+                        <h3 class="text-xl font-bold text-accent-gold mb-4">🏆 Tambah Prestasi Baru</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="achievement-title" placeholder="Nama Prestasi" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <input type="text" id="achievement-desc" placeholder="Deskripsi Prestasi" required class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400">
+                            <button id="add-achievement-btn" type="button" class="w-full px-6 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition duration-300">
+                                💾 Simpan Prestasi
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -586,106 +427,117 @@
 
     </main>
 
-    <!-- FOOTER + Sosial Media -->
-    <footer class="bg-gray-950 text-white mt-12 py-8 border-t border-gray-700">
+    <!-- FOOTER -->
+    <footer class="bg-gray-950 text-white mt-12 py-8 border-t border-gray-700" style="padding-bottom: 7rem;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex justify-center space-x-6 mb-4">
-                <!-- Instagram -->
-                <a href="https://www.instagram.com/brigpas_nesaga?igsh=MWQ1eTFhN25xaW5wcg==" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-accent-gold transition duration-200" title="Kunjungi Instagram Kami">
+                <a href="https://www.instagram.com/brigpas_nesaga?igsh=MWQ1eTFhN25xaW5wcg==" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-accent-gold transition duration-200" title="Instagram">
                     <i data-lucide="instagram" class="w-7 h-7"></i>
                 </a>
-                <!-- TikTok -->
-                <a href="https://www.tiktok.com/@brigpas_nesaga?_r=1&_d=e6l43gi13560a9&sec_uid=MS4wLjABAAAAJb12dk1OPf_6u2iNHnWDe5TuxUVLIQuKcZiWqMLElSqEfSHXQA7pKA2uOxF9GwUG&share_author_id=7311590835576407045&sharer_language=id&source=h5_t&u_code=ebega96eemi9ii&timestamp=1761837890&user_id=7311590835576407045&sec_user_id=MS4wLjABAAAAJb12dk1OPf_6u2iNHnWDe5TuxUVLIQuKcZiWqMLElSqEfSHXQA7pKA2uOxF9GwUG&item_author_type=1&utm_source=copy&utm_campaign=client_share&utm_medium=android&share_iid=7565712163157133064&share_link_id=3ab78aca-1af6-4017-8339-eda481c6a7d3&share_app_id=1180&ugbiz_name=ACCOUNT&ug_btm=b8727%2Cb7360&social_share_type=5&enable_checksum=1" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-accent-gold transition duration-200" title="Kunjungi TikTok Kami">
+                <a href="https://www.tiktok.com/@brigpas_nesaga?_r=1&_d=e6l43gi13560a9&sec_uid=MS4wLjABAAAAJb12dk1OPf_6u2iNHnWDe5TuxUVLIQuKcZiWqMLElSqEfSHXQA7pKA2uOxF9GwUG&share_author_id=7311590835576407045&sharer_language=id&source=h5_t&u_code=ebega96eemi9ii&timestamp=1761837890&user_id=7311590835576407045&sec_user_id=MS4wLjABAAAAJb12dk1OPf_6u2iNHnWDe5TuxUVLIQuKcZiWqMLElSqEfSHXQA7pKA2uOxF9GwUG&item_author_type=1&utm_source=copy&utm_campaign=client_share&utm_medium=android&share_iid=7565712163157133064&share_link_id=3ab78aca-1af6-4017-8339-eda481c6a7d3&share_app_id=1180&ugbiz_name=ACCOUNT&ug_btm=b8727%2Cb7360&social_share_type=5&enable_checksum=1" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-accent-gold transition duration-200" title="TikTok">
                     <i data-lucide="zap" class="w-7 h-7"></i>
                 </a>
-                <!-- WhatsApp Channel BARU -->
-                <a href="https://whatsapp.com/channel/0029VaoTsho5Ui2fyXa1e42H" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-accent-gold transition duration-200" title="Ikuti Channel WhatsApp Kami">
-                    <i data-lucide="message-circle" class="w-7 h-7"></i>
-                </a>
             </div>
-
             <p class="text-sm text-accent-gold">&copy; 2025 BRIGPASNESAGA - SMP Negeri 1 Gabuswetan.</p>
             <p class="text-xs text-gray-500 mt-1">Dibuat Untuk Kepentingan Organisasi</p>
         </div>
     </footer>
 
-    <!-- MINI PLAYER -->
+    <!-- MINI PLAYER & NAVIGASI -->
     <div id="mini-player" class="mini-player">
         <i data-lucide="play" class="mini-player-icon"></i>
     </div>
 
-    <!-- NAVIGASI BAWAH -->
     <nav class="bottom-nav">
         <div class="bottom-nav-container">
-            <button data-page="home" class="bottom-nav-item active">
+            <div class="bottom-nav-item active" data-page="home">
                 <i data-lucide="home" class="bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Beranda</span>
-            </button>
-            <button data-page="galeri" class="bottom-nav-item">
+            </div>
+            <div class="bottom-nav-item" data-page="galeri">
                 <i data-lucide="image" class="bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Galeri</span>
-            </button>
-            <button data-page="prestasi" class="bottom-nav-item">
-                <i data-lucide="trophy" class="bottom-nav-icon"></i>
+            </div>
+            <div class="bottom-nav-item" data-page="prestasi">
+                <i data-lucide="award" class="bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Prestasi</span>
-            </button>
-            <button data-page="struktur" class="bottom-nav-item">
+            </div>
+            <div class="bottom-nav-item" data-page="struktur">
                 <i data-lucide="users" class="bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Struktur</span>
-            </button>
-            <button data-page="admin" class="bottom-nav-item">
+            </div>
+            <div class="bottom-nav-item" data-page="masukan">
+                <i data-lucide="send" class="bottom-nav-icon"></i>
+                <span class="bottom-nav-label">Masukan</span>
+            </div>
+            <div class="bottom-nav-item" data-page="admin">
                 <i data-lucide="shield" class="bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Admin</span>
-            </button>
+            </div>
         </div>
     </nav>
 
-    <!-- KONTROL AUDIO PLAYER -->
+    <!-- AUDIO & MODAL -->
     <audio id="background-audio"></audio>
-
-    <!-- MODAL UNTUK GALERI -->
+    
     <div id="image-modal" class="fixed inset-0 hidden items-center justify-center z-[100] modal-backdrop opacity-0">
-        <div class="modal-content relative p-4 bg-gray-900 rounded-lg shadow-2xl">
-            <button id="close-modal-btn" class="absolute top-2 right-2 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-black transition duration-200">
+        <div class="modal-content bg-card-dark p-4 rounded-lg shadow-2xl relative w-full max-w-3xl transform scale-95 opacity-0">
+            <button id="close-modal-btn" class="absolute -top-3 -right-3 p-2 bg-accent-crimson rounded-full text-white shadow-lg z-10">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
-            <img id="modal-image" src="" alt="Gambar Galeri Besar" class="max-w-full max-h-[80vh] rounded-lg object-contain">
-            <p id="modal-caption" class="text-center mt-3 text-gray-300 text-base"></p>
+            <img id="modal-image" src="" alt="Galeri" class="w-full h-auto max-h-[80vh] object-contain rounded">
+            <p id="modal-caption" class="text-center text-lg text-gray-300 mt-4"></p>
         </div>
     </div>
     
-    <!-- MODAL UNTUK PLAYLIST -->
     <div id="playlist-modal" class="fixed inset-0 hidden items-center justify-center z-[100] modal-backdrop opacity-0">
-        <div class="modal-content w-11/12 max-w-md bg-card-dark p-6 rounded-xl shadow-2xl">
-            <div class="flex justify-between items-center border-b border-gray-700 pb-3 mb-4">
-                <h2 class="text-xl font-bold text-accent-gold flex items-center">
-                    <i data-lucide="list-music" class="w-6 h-6 mr-2"></i> Daftar Putar
-                </h2>
-                <button id="close-playlist-btn" class="p-1 rounded-md hover:bg-gray-700 text-gray-300">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+        <div class="modal-content bg-card-dark p-6 rounded-lg shadow-2xl w-full max-w-md transform scale-95 opacity-0">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-accent-gold">Playlist Lagu</h2>
+                <button id="close-playlist-btn" class="p-2 rounded-full text-gray-400 hover:bg-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            
-            <div id="playlist-container" class="space-y-2 max-h-80 overflow-y-auto pr-2">
-                <!-- List lagu akan di-generate oleh JavaScript di sini -->
+            <div id="playlist-container" class="max-h-64 overflow-y-auto space-y-2">
+                <p class="text-gray-400">Memuat playlist...</p>
             </div>
-            
-            <p class="text-center text-xs text-gray-500 mt-4">Klik judul lagu untuk memutar.</p>
         </div>
     </div>
 
     <!-- SCRIPT JAVASCRIPT -->
     <script>
-        // Inisialisasi Lucide Icons
-        try { if(window.lucide && lucide.createIcons) { lucide.createIcons(); } } catch(e) { console.warn('lucide.createIcons failed', e); }
+        // ===========================================
+        // KONFIGURASI FIREBASE - SUDAH DIMASUKKAN!
+        // ===========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDERAxtf4eQEuyh--1NgyNvzulBBsNnJA",
+            authDomain: "brigpasnesaga-a31a6.firebaseapp.com",
+            projectId: "brigpasnesaga-a31a6",
+            storageBucket: "brigpasnesaga-a31a6.firebasestorage.app",
+            messagingSenderId: "666499505119",
+            appId: "1:666499505119:web:70015495924624604c826a"
+        };
+
+        // Initialize Firebase
+        let db;
+        try {
+            const app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("Firebase Firestore connected!");
+        } catch (error) {
+            console.log('Firebase error:', error);
+        }
 
         // ===========================================
-        // SISTEM SHARED DATA - SEMUA PENGGUNA BISA LIHAT
+        // SISTEM DATA
         // ===========================================
         
-        // Key untuk shared data
-        const SHARED_DATA_KEY = 'brigpasnesaga_shared_data';
-        
+        let appData = {
+            gallery: [],
+            songs: [],
+            achievements: []
+        };
+
         // Data default
         const defaultData = {
             gallery: [
@@ -696,40 +548,13 @@
                 },
                 {
                     src: "https://files.catbox.moe/0qi2j4.jpg",
-                    title: "Foto Setelah Latihan Rutin",
+                    title: "Foto Setelah Latihan Rutin", 
                     description: "Foto Setelah Latihan."
-                },
-                {
-                    src: "https://files.catbox.moe/5qga8z.jpg",
-                    title: "PENYERAHAN PIALA LKBB SPECTRA - Pasukan A Dan B",
-                    description: "Pasukan A Dan B."
-                },
-                {
-                    src: "https://files.catbox.moe/py84p2.jpg",
-                    title: "DP FOTO LKBB SPECTRA - Pasukan A",
-                    description: "Pasukan A."
-                },
-                {
-                    src: "https://files.catbox.moe/fxa8qz.jpg",
-                    title: "DP FOTO LKBB SPECTRA - Pasukan B",
-                    description: "Pasukan B."
-                },
-                {
-                    src: "https://files.catbox.moe/2qpvf0.jpg",
-                    title: "DOKUMENTASI LATGAB (Latihan Gabungan) with NEGATAN & NEGAYA",
-                    description: "LATIHAN GABUNGAN WITH NEGATAN & NEGAYA"
-                },
-                {
-                    src: "https://files.catbox.moe/9290dk.jpg",
-                    title: "Demonstrasi Eskul - Pasukan A Dan B",
-                    description: "Pasukan A Dan B."
                 }
             ],
             songs: [
                 { title: ".Feast - Nina", url: "https://files.catbox.moe/wm7ye2.webm" },
-                { title: ".Feast - Evaluasi", url: "https://files.catbox.moe/0o4yha.webm" },
-                { title: "Everything u are", url: "https://files.catbox.moe/v2gxlu.webm" },
-                { title: "Bergema Sampai Selamanya", url: "https://files.catbox.moe/fytdzv.webm" }
+                { title: ".Feast - Evaluasi", url: "https://files.catbox.moe/0o4yha.webm" }
             ],
             achievements: [
                 {
@@ -739,512 +564,311 @@
                 {
                     title: "Juara Perintis 1 - LKBB SPECTRA",
                     description: "Lomba Keterampilan Baris-Berbaris tingkat Provinsi yang diselenggarakan oleh Paskibra SMK PUI JATIBARANG."
-                },
-                {
-                    title: "Juara Votting Qris 3 - LKBB SPECTRA",
-                    description: "Lomba Keterampilan Baris-Berbaris tingkat Provinsi yang diselenggarakan oleh Paskibra SMK PUI JATIBARANG."
-                },
-                {
-                    title: "Juara Ter Antusias - LKBB SPECTRA",
-                    description: "Lomba Keterampilan Baris-Berbaris tingkat Provinsi yang diselenggarakan oleh Paskibra SMK PUI JATIBARANG."
                 }
             ]
         };
-        
-        
-// ================================
-// INDEXEDDB STORAGE LAYER (BRIGPAS_DB)
-// ================================
 
-const IDB_DB_NAME = 'BRIGPAS_DB';
-const IDB_DB_VERSION = 1;
-let idbInstance = null;
+        // ===========================================
+        // FUNGSI FIREBASE
+        // ===========================================
 
-// In-memory cache used by synchronous UI code
-let UPLOAD_CACHE = {
-    gallery: [],
-    songs: [],
-    achievements: []
-};
-
-function openIndexedDB() {
-    return new Promise((resolve, reject) => {
-        if (idbInstance) return resolve(idbInstance);
-        const req = indexedDB.open(IDB_DB_NAME, IDB_DB_VERSION);
-        req.onupgradeneeded = function(e) {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('gallery')) db.createObjectStore('gallery', { keyPath: 'id', autoIncrement: true });
-            if (!db.objectStoreNames.contains('songs')) db.createObjectStore('songs', { keyPath: 'id', autoIncrement: true });
-            if (!db.objectStoreNames.contains('achievements')) db.createObjectStore('achievements', { keyPath: 'id', autoIncrement: true });
-        };
-        req.onsuccess = function(e) {
-            idbInstance = e.target.result;
-            resolve(idbInstance);
-        };
-        req.onerror = function(e) {
-            console.error('IndexedDB open error:', e);
-            reject(e);
-        };
-    });
-}
-
-function idbPut(storeName, item) {
-    return openIndexedDB().then(db => new Promise((res, rej) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.add(item);
-        req.onsuccess = () => res(true);
-        req.onerror = (e) => { console.error('idbPut error', e); rej(e); };
-    }));
-}
-
-function idbGetAll(storeName) {
-    return openIndexedDB().then(db => new Promise((res, rej) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => res(req.result || []);
-        req.onerror = (e) => { console.error('idbGetAll error', e); rej(e); };
-    }));
-}
-
-function idbClearStore(storeName) {
-    return openIndexedDB().then(db => new Promise((res, rej) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.clear();
-        req.onsuccess = () => res(true);
-        req.onerror = (e) => { console.error('idbClearStore error', e); rej(e); };
-    }));
-}
-
-function idbDeleteByIndex(storeName, predicateFn) {
-    // Helper to delete matching items; predicateFn receives item and returns true if should be deleted
-    return openIndexedDB().then(db => new Promise((res, rej) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.openCursor();
-        req.onsuccess = function(e) {
-            const cursor = e.target.result;
-            if (!cursor) return res(true);
-            const val = cursor.value;
-            if (predicateFn(val)) {
-                cursor.delete();
+        // Load data dari Firebase
+        async function loadData() {
+            if (!db) {
+                console.log("Firebase not connected, using default data");
+                appData = { ...defaultData };
+                updateAllDisplays();
+                return;
             }
-            cursor.continue();
-        };
-        req.onerror = (e) => { console.error('idbDeleteByIndex error', e); rej(e); };
-    }));
-}
 
-// MIGRATE data from localStorage (brigpasnesaga_shared_data) to IndexedDB
-async function migrateLocalStorageToIndexedDB() {
-    try {
-        const raw = localStorage.getItem(SHARED_DATA_KEY);
-        if (!raw) {
-            // load from indexedDB into UPLOAD_CACHE
-            loadCacheFromIndexedDB().then(()=>{});return;
-        }
-        const parsed = JSON.parse(raw);
-        // defensive shapes
-        parsed.gallery = parsed.gallery || [];
-        parsed.songs = parsed.songs || [];
-        parsed.achievements = parsed.achievements || [];
-        // First clear existing stores to avoid duplicates
-        await Promise.all([idbClearStore('gallery'), idbClearStore('songs'), idbClearStore('achievements')]);
-        // Put items into indexedDB
-        for (const g of parsed.gallery) {
-            try { await idbPut('gallery', g); } catch(e){ console.warn('put gallery',e); }
-        }
-        for (const s of parsed.songs) {
-            try { await idbPut('songs', s); } catch(e){ console.warn('put song',e); }
-        }
-        for (const a of parsed.achievements) {
-            try { await idbPut('achievements', a); } catch(e){ console.warn('put ach',e); }
-        }
-        // set in-memory cache
-        UPLOAD_CACHE.gallery = parsed.gallery.slice();
-        UPLOAD_CACHE.songs = parsed.songs.slice();
-        UPLOAD_CACHE.achievements = parsed.achievements.slice();
-        // remove old localStorage data
-        localStorage.removeItem(SHARED_DATA_KEY);
-        console.log('Migration complete: localStorage -> IndexedDB');
-    } catch (error) {
-        console.error('Migration error:', error);
-        // fallback: try to load existing indexedDB data into cache
-        loadCacheFromIndexedDB().then(()=>{});}
-}
-
-async function loadCacheFromIndexedDB() {
-    try {
-        const [gallery, songs, achievements] = await Promise.all([
-            idbGetAll('gallery'),
-            idbGetAll('songs'),
-            idbGetAll('achievements')
-        ]);
-        // stored objects may include id keys; remove id for consistent shape
-        UPLOAD_CACHE.gallery = gallery.map(item => {
-            const { id, ...rest } = item; return rest;
-        });
-        UPLOAD_CACHE.songs = songs.map(item => { const { id, ...rest } = item; return rest; });
-        UPLOAD_CACHE.achievements = achievements.map(item => { const { id, ...rest } = item; return rest; });
-        console.log('Loaded cache from IndexedDB', {gallery: UPLOAD_CACHE.gallery.length, songs: UPLOAD_CACHE.songs.length, achievements: UPLOAD_CACHE.achievements.length});
-    } catch (e) {
-        console.error('loadCacheFromIndexedDB error', e);
-    }
-}
-
-// Synchronous API wrappers used by UI (they operate on UPLOAD_CACHE and schedule IDB writes)
-function saveSharedData(key, newItem) {
-    try {
-        if (!UPLOAD_CACHE[key]) UPLOAD_CACHE[key] = [];
-        // add to front
-        UPLOAD_CACHE[key].unshift(newItem);
-        // limits
-        const limits = { gallery: 200, songs: 150, achievements: 100 };
-        if (UPLOAD_CACHE[key].length > limits[key]) {
-            UPLOAD_CACHE[key] = UPLOAD_CACHE[key].slice(0, limits[key]);
-        }
-        // asynchronously persist to IndexedDB (best-effort)
-        idbPut(key, newItem).catch(err => console.error('idbPut failed', err));
-        notifyDataUpdate(key);
-        return true;
-    } catch (e) {
-        console.error('saveSharedData error', e);
-        return false;
-    }
-}
-
-function updateSharedData(key, index, updatedItem) {
-    try {
-        if (!UPLOAD_CACHE[key] || !UPLOAD_CACHE[key][index]) return false;
-        UPLOAD_CACHE[key][index] = updatedItem;
-        // Simplest persistence: clear store and re-add all items (keeps indexes simple)
-        (async () => {
             try {
-                await idbClearStore(key);
-                for (const it of UPLOAD_CACHE[key]) {
-                    await idbPut(key, it);
-                }
-                notifyDataUpdate(key);
-            } catch (e) { console.error('updateSharedData idb error', e); }
-        })();
-        return true;
-    } catch (e) {
-        console.error('updateSharedData error', e);
-        return false;
-    }
-}
+                // Load gallery
+                const gallerySnapshot = await db.collection('gallery').orderBy('createdAt', 'desc').get();
+                appData.gallery = gallerySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Load songs
+                const songsSnapshot = await db.collection('songs').orderBy('createdAt', 'desc').get();
+                appData.songs = songsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Load achievements
+                const achievementsSnapshot = await db.collection('achievements').orderBy('createdAt', 'desc').get();
+                appData.achievements = achievementsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-function deleteSharedData(key, index) {
-    try {
-        if (!UPLOAD_CACHE[key] || !UPLOAD_CACHE[key][index]) return false;
-        // remove from cache
-        UPLOAD_CACHE[key].splice(index, 1);
-        // persist: clear and re-add
-        (async () => {
+                console.log("Data loaded from Firebase");
+                updateAllDisplays();
+            } catch (error) {
+                console.log("Error loading data, using default:", error);
+                appData = { ...defaultData };
+                updateAllDisplays();
+            }
+        }
+
+        // Save data ke Firebase
+        async function saveData(collection, data) {
+            if (!db) {
+                alertMessage("Firebase belum dikoneksi", "warning");
+                return null;
+            }
+
             try {
-                await idbClearStore(key);
-                for (const it of UPLOAD_CACHE[key]) {
-                    await idbPut(key, it);
-                }
-                notifyDataUpdate(key);
-            } catch (e) { console.error('deleteSharedData idb error', e); }
-        })();
-        return true;
-    } catch (e) {
-        console.error('deleteSharedData error', e);
-        return false;
-    }
-}
-
-// getUploadData (sync) returns cache snapshot
-function getUploadData() {
-    return {
-        gallery: UPLOAD_CACHE.gallery.slice(),
-        songs: UPLOAD_CACHE.songs.slice(),
-        achievements: UPLOAD_CACHE.achievements.slice()
-    };
-}
-
-// getAllData merges defaultData + uploads (uploads come after default)
-function getAllData() {
-    return {
-        gallery: defaultData.gallery.concat(UPLOAD_CACHE.gallery),
-        songs: defaultData.songs.concat(UPLOAD_CACHE.songs),
-        achievements: defaultData.achievements.concat(UPLOAD_CACHE.achievements)
-    };
-}
-
-// Initialize DB + migrate on first load
-(async function initIndexedDBMigration() {
-    try {
-        await openIndexedDB();
-        await migrateLocalStorageToIndexedDB();
-        // if migration didn't populate cache, ensure we load any existing IDB data
-        if (!UPLOAD_CACHE || (UPLOAD_CACHE.gallery.length===0 && UPLOAD_CACHE.songs.length===0 && UPLOAD_CACHE.achievements.length===0)) {
-            loadCacheFromIndexedDB().then(()=>{});}
-    } catch (e) {
-        console.error('IndexedDB init error', e);
-    }
-})();
-
-
-// FUNGSI BARU: Update data yang sudah ada
-
-        function updateSharedData(key, index, updatedItem) {
-            try {
-                const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
-                const sharedData = sharedDataJson ? JSON.parse(sharedDataJson) : {
-                    gallery: [],
-                    songs: [],
-                    achievements: []
+                const dataWithTimestamp = {
+                    ...data,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                if (sharedData[key] && sharedData[key][index]) {
-                    sharedData[key][index] = updatedItem;
-                    localStorage.setItem(SHARED_DATA_KEY, JSON.stringify(sharedData));
-                    notifyDataUpdate(key);
-                    return true;
-                }
-                return false;
+                const docRef = await db.collection(collection).add(dataWithTimestamp);
+                return docRef.id;
             } catch (error) {
-                console.error('Error updating shared data:', error);
-                return false;
+                console.error("Save error:", error);
+                alertMessage("Gagal menyimpan data: " + error.message, "warning");
+                return null;
             }
         }
 
-        // FUNGSI BARU: Hapus data
-        function deleteSharedData(key, index) {
-            try {
-                const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
-                const sharedData = sharedDataJson ? JSON.parse(sharedDataJson) : {
-                    gallery: [],
-                    songs: [],
-                    achievements: []
-                };
+        // ===========================================
+        // FUNGSI TAMPILAN
+        // ===========================================
+
+        function updateAllDisplays() {
+            loadGallery();
+            loadAchievements();
+            renderPlaylist();
+        }
+
+        // Load dan tampilkan gallery
+        function loadGallery() {
+            const container = document.getElementById('gallery-container');
+            const data = [...defaultData.gallery, ...appData.gallery];
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 col-span-full text-center">Belum ada foto di galeri</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            data.forEach(item => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-gray-800 cursor-pointer';
+                galleryItem.innerHTML = `
+                    <img src="${item.src}" 
+                         alt="${item.title}" 
+                         class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-300"
+                         onerror="this.src='https://placehold.co/600x400/3A4557/E0E6F0?text=FOTO+GAGAL+DIMUAT'">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-200">${item.title}</h3>
+                        <p class="text-sm text-gray-400">${item.description}</p>
+                    </div>
+                `;
                 
-                if (sharedData[key] && sharedData[key][index]) {
-                    sharedData[key].splice(index, 1);
-                    localStorage.setItem(SHARED_DATA_KEY, JSON.stringify(sharedData));
-                    notifyDataUpdate(key);
-                    return true;
-                }
-                return false;
-            } catch (error) {
-                console.error('Error deleting shared data:', error);
-                return false;
-            }
-        }
-        
-        // PERBAIKAN: Fungsi untuk mendapatkan semua data (gabungan default + shared)
-        function getAllData() {
-            try {
-                const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
-                if (sharedDataJson) {
-                    const sharedData = JSON.parse(sharedDataJson);
-                    
-                    // Data default selalu ditampilkan, data upload dibatasi
-                    return {
-                        gallery: [...defaultData.gallery, ...(sharedData.gallery || [])],
-                        songs: [...defaultData.songs, ...(sharedData.songs || [])],
-                        achievements: [...defaultData.achievements, ...(sharedData.achievements || [])]
-                    };
-                }
-            } catch (error) {
-                console.error('Error loading shared data:', error);
-            }
-            
-            return defaultData;
-        }
-
-        // FUNGSI BARU: Get hanya data upload (untuk edit/hapus)
-        function getUploadData() {
-            try {
-                const sharedDataJson = localStorage.getItem(SHARED_DATA_KEY);
-                return sharedDataJson ? JSON.parse(sharedDataJson) : {
-                    gallery: [],
-                    songs: [],
-                    achievements: []
-                };
-            } catch (error) {
-                console.error('Error loading upload data:', error);
-                return {
-                    gallery: [],
-                    songs: [],
-                    achievements: []
-                };
-            }
-        }
-        
-        // Fungsi untuk memberi tahu update data
-        function notifyDataUpdate(type) {
-            const notification = document.getElementById('sync-notification');
-            const message = document.getElementById('sync-message');
-            
-            let msg = '';
-            switch(type) {
-                case 'gallery': msg = 'Foto baru ditambahkan!'; break;
-                case 'songs': msg = 'Lagu baru ditambahkan!'; break;
-                case 'achievements': msg = 'Prestasi baru ditambahkan!'; break;
-                default: msg = 'Data diperbarui!';
-            }
-            
-            message.textContent = msg;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-            
-            localStorage.setItem('last_data_update', Date.now().toString());
-        }
-        
-        // Fungsi untuk memeriksa update data
-        function checkForUpdates() {
-            const lastUpdate = localStorage.getItem('last_data_update');
-            if (lastUpdate) {
-                const now = Date.now();
-                const fiveMinutes = 5 * 60 * 1000;
+                galleryItem.addEventListener('click', () => {
+                    openModal(item.src, item.title);
+                });
                 
-                if (now - parseInt(lastUpdate) > fiveMinutes) {
-                    loadGallery();
-                    loadAchievements();
-                    loadManageData(); // BARU: Refresh data manage
-                    localStorage.setItem('last_data_update', now.toString());
-                }
-            }
-        }
-
-        // Elemen Navigasi
-        const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
-        const pages = document.querySelectorAll('.page-content');
-        
-        // Elemen Audio & Kontrol
-        const audio = document.getElementById('background-audio');
-        const miniPlayer = document.getElementById('mini-player');
-        const themeToggleBtn = document.getElementById('theme-toggle-btn');
-        const themeIcon = themeToggleBtn.querySelector('i');
-        
-        // Elemen Galeri Modal
-        const imageModal = document.getElementById('image-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const modalImage = document.getElementById('modal-image');
-        const modalCaption = document.getElementById('modal-caption');
-        
-        // Elemen Playlist Modal
-        const playlistOpenBtn = document.getElementById('playlist-open-btn');
-        const playlistModal = document.getElementById('playlist-modal');
-        const closePlaylistBtn = document.getElementById('close-playlist-btn');
-        const playlistContainer = document.getElementById('playlist-container');
-
-        // Elemen Masukan
-        const feedbackInput = document.getElementById('feedback-input');
-        const sendWhatsappBtn = document.getElementById('send-whatsapp-btn');
-        const adminWhatsappNumber = "6283159696918";
-
-        // Elemen Admin
-        const adminLoginForm = document.getElementById('admin-login-form');
-        const adminPanel = document.getElementById('admin-panel');
-        const adminLoginBtn = document.getElementById('admin-login-btn');
-        const adminLogoutBtn = document.getElementById('admin-logout-btn');
-        const galleryImageFileInput = document.getElementById('gallery-image-file');
-        const galleryImageTitleInput = document.getElementById('gallery-image-title');
-        const galleryImageDescInput = document.getElementById('gallery-image-desc');
-        const addGalleryImageBtn = document.getElementById('add-gallery-image-btn');
-        const songFileInput = document.getElementById('song-file');
-        const songTitleInput = document.getElementById('song-title');
-        const addSongBtn = document.getElementById('add-song-btn');
-        const achievementTitleInput = document.getElementById('achievement-title');
-        const achievementDescInput = document.getElementById('achievement-desc');
-        const addAchievementBtn = document.getElementById('add-achievement-btn');
-        const songUploadLoading = document.getElementById('song-upload-loading');
-
-        // Elemen BARU untuk manage data
-        const manageGalleryContainer = document.getElementById('manage-gallery-container');
-        const manageSongsContainer = document.getElementById('manage-songs-container');
-        const manageAchievementsContainer = document.getElementById('manage-achievements-container');
-
-        // Kontainer untuk konten dinamis
-        const galleryContainer = document.getElementById('gallery-container');
-        const achievementsContainer = document.getElementById('achievements-container');
-
-        let isPlaying = false;
-        let currentSongIndex = 0;
-        let fadeInterval;
-
-        // ===========================================
-        // KONFIGURASI ADMIN
-        // ===========================================
-        const ADMIN_CREDENTIALS = {
-            username: "BRIGPASNESAGA",
-            password: "ADMINBRIGPAS"
-        };
-
-        // ===========================================
-        // FUNGSI UTILITAS
-        // ===========================================
-
-        // Fungsi Tampilkan Halaman
-        function showPage(pageId) {
-            bottomNavItems.forEach(item => item.classList.remove('active'));
-            pages.forEach(page => {
-                page.classList.remove('active');
+                container.appendChild(galleryItem);
             });
-
-            setTimeout(() => {
-                const activePage = document.getElementById(pageId);
-                if (activePage) {
-                    activePage.classList.add('active');
-                }
-
-                const activeNavItem = document.querySelector(`.bottom-nav-item[data-page="${pageId}"]`);
-                if (activeNavItem) {
-                    activeNavItem.classList.add('active');
-                }
-            }, 50); 
         }
 
-        // Fungsi untuk mengubah tema
-        function toggleTheme() {
-            const body = document.body;
-            const isLightMode = body.classList.contains('light-mode');
+        // Load dan tampilkan prestasi
+        function loadAchievements() {
+            const container = document.getElementById('achievements-container');
+            const data = [...defaultData.achievements, ...appData.achievements];
             
-            if (isLightMode) {
-                body.classList.remove('light-mode');
-                localStorage.setItem('theme', 'dark');
-                themeIcon.setAttribute('data-lucide', 'moon');
-            } else {
-                body.classList.add('light-mode');
-                localStorage.setItem('theme', 'light');
-                themeIcon.setAttribute('data-lucide', 'sun');
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center">Belum ada prestasi</p>';
+                return;
             }
+            
+            container.innerHTML = '';
+            
+            data.forEach(item => {
+                const achievementItem = document.createElement('div');
+                achievementItem.className = 'flex items-start space-x-4 p-4 border border-gray-700 rounded-lg bg-gray-800';
+                achievementItem.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <i data-lucide="award" class="w-10 h-10 text-accent-gold"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-100">${item.title}</h3>
+                        <p class="text-gray-400">${item.description}</p>
+                    </div>
+                `;
+                container.appendChild(achievementItem);
+            });
             
             lucide.createIcons();
         }
 
-        // Fungsi untuk memuat tema dari localStorage
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-mode');
-                themeIcon.setAttribute('data-lucide', 'sun');
-            } else {
-                document.body.classList.remove('light-mode');
-                themeIcon.setAttribute('data-lucide', 'moon');
-                localStorage.setItem('theme', 'dark');
+        // ===========================================
+        // ADMIN FUNCTIONS
+        // ===========================================
+
+        // Tambah foto baru
+        async function addGalleryImage() {
+            const url = document.getElementById('gallery-image-url').value.trim();
+            const title = document.getElementById('gallery-image-title').value.trim();
+            const desc = document.getElementById('gallery-image-desc').value.trim();
+            
+            if (!url || !title || !desc) {
+                alertMessage("Semua field harus diisi", "warning");
+                return;
             }
+
+            const newImage = { src: url, title, description: desc };
+            const id = await saveData('gallery', newImage);
+            
+            if (id) {
+                appData.gallery.unshift({ id, ...newImage });
+                document.getElementById('gallery-image-url').value = '';
+                document.getElementById('gallery-image-title').value = '';
+                document.getElementById('gallery-image-desc').value = '';
+                loadGallery();
+                alertMessage("✅ Foto berhasil ditambahkan!", "success");
+            }
+        }
+
+        // Tambah lagu baru
+        async function addSong() {
+            const url = document.getElementById('song-url').value.trim();
+            const title = document.getElementById('song-title').value.trim();
+            
+            if (!url || !title) {
+                alertMessage("URL dan judul lagu harus diisi", "warning");
+                return;
+            }
+
+            const newSong = { url, title };
+            const id = await saveData('songs', newSong);
+            
+            if (id) {
+                appData.songs.unshift({ id, ...newSong });
+                document.getElementById('song-url').value = '';
+                document.getElementById('song-title').value = '';
+                renderPlaylist();
+                alertMessage("✅ Lagu berhasil ditambahkan!", "success");
+                
+                if (currentSongIndex === -1 && appData.songs.length > 0) {
+                    loadSong(0);
+                }
+            }
+        }
+
+        // Tambah prestasi baru
+        async function addAchievement() {
+            const title = document.getElementById('achievement-title').value.trim();
+            const desc = document.getElementById('achievement-desc').value.trim();
+            
+            if (!title || !desc) {
+                alertMessage("Judul dan deskripsi harus diisi", "warning");
+                return;
+            }
+
+            const newAchievement = { title, description: desc };
+            const id = await saveData('achievements', newAchievement);
+            
+            if (id) {
+                appData.achievements.unshift({ id, ...newAchievement });
+                document.getElementById('achievement-title').value = '';
+                document.getElementById('achievement-desc').value = '';
+                loadAchievements();
+                alertMessage("✅ Prestasi berhasil ditambahkan!", "success");
+            }
+        }
+
+        // ===========================================
+        // MUSIC PLAYER
+        // ===========================================
+        let isPlaying = false;
+        let currentSongIndex = -1;
+        const audio = document.getElementById('background-audio');
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-container');
+            const data = [...defaultData.songs, ...appData.songs];
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center">Belum ada lagu di playlist</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            data.forEach((song, index) => {
+                const isActive = index === currentSongIndex;
+                const listItem = document.createElement('div');
+                listItem.className = `p-3 rounded-lg cursor-pointer transition duration-200 ${
+                    isActive ? 'bg-accent-crimson text-white font-semibold' : 'hover:bg-gray-700 text-gray-300'
+                }`;
+                listItem.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        ${isActive ? '<i data-lucide="volume-2" class="w-4 h-4"></i>' : '<i data-lucide="music" class="w-4 h-4"></i>'}
+                        <span class="flex-1">${index + 1}. ${song.title}</span>
+                    </div>
+                `;
+                listItem.addEventListener('click', () => {
+                    loadSong(index, true);
+                    closePlaylistModal();
+                });
+                container.appendChild(listItem);
+            });
+            
             lucide.createIcons();
         }
 
-        // Fungsi untuk menampilkan pesan
+        function loadSong(index, shouldPlay = false) {
+            const data = [...defaultData.songs, ...appData.songs];
+            if (index >= 0 && index < data.length) {
+                currentSongIndex = index;
+                audio.src = data[currentSongIndex].url;
+                audio.load();
+                updatePlayerUI();
+                if (shouldPlay) playAudio();
+            }
+        }
+
+        function playAudio() {
+            if (currentSongIndex === -1) {
+                if (appData.songs.length > 0) {
+                    loadSong(0, true);
+                }
+                return;
+            }
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                updatePlayerUI();
+            }).catch(error) {
+                console.log("Play error:", error);
+                alertMessage("Gagal memutar audio. Cek koneksi internet.", "warning");
+            });
+        }
+
+        function pauseAudio() {
+            audio.pause();
+            isPlaying = false;
+            updatePlayerUI();
+        }
+
+        function updatePlayerUI() {
+            const iconName = isPlaying ? 'pause' : 'play';
+            miniPlayer.innerHTML = `<i data-lucide="${iconName}" class="mini-player-icon"></i>`;
+            lucide.createIcons();
+        }
+
+        // ===========================================
+        // UTILITY FUNCTIONS
+        // ===========================================
+
         function alertMessage(message, type = "info") {
             let existingAlert = document.getElementById('custom-alert');
             if (existingAlert) existingAlert.remove();
 
-            const bgColor = type === "warning" ? "bg-yellow-500" : "bg-red-700";
+            const bgColor = type === "warning" ? "bg-yellow-500" : 
+                           type === "success" ? "bg-green-600" : 
+                           type === "error" ? "bg-red-700" : "bg-blue-600";
+            
             const alertHtml = `
-                <div id="custom-alert" class="fixed top-4 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-xl text-white font-semibold z-[100] ${bgColor} transition-opacity duration-300" style="opacity: 0;">
+                <div id="custom-alert" class="fixed top-20 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-xl text-white font-semibold z-[100] ${bgColor} transition-opacity duration-300" style="opacity: 0;">
                     ${message}
                 </div>
             `;
@@ -1259,913 +883,238 @@ function getAllData() {
             }, 3000);
         }
 
-        // =====================================
-        // FUNGSI MANAJEMEN DATA
-        // =====================================
-
-        // Fungsi untuk memuat galeri
-        function loadGallery() {
-            const data = getAllData();
-            galleryContainer.innerHTML = '';
-            
-            data.gallery.forEach(item => {
-                const galleryItem = document.createElement('div');
-                galleryItem.className = 'gallery-item overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-card-dark-highlight cursor-pointer';
-                galleryItem.setAttribute('data-src', item.src);
-                galleryItem.setAttribute('data-caption', item.title);
-                
-                galleryItem.innerHTML = `
-                    <img src="${item.src}" 
-                         alt="${item.title}" 
-                         class="w-full h-64 object-cover transform hover:scale-105 transition-transform duration-300"
-                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/3A4557/E0E6F0?text=FOTO+GAGAL+DIMUAT'">
-                    <div class="p-4 bg-gray-900 border-t border-gray-700">
-                        <h3 class="font-semibold text-gray-200">${item.title}</h3>
-                        <p class="text-sm text-gray-400">${item.description}</p>
-                    </div>
-                `;
-                
-                galleryItem.addEventListener('click', () => {
-                    const src = galleryItem.getAttribute('data-src');
-                    const caption = galleryItem.getAttribute('data-caption');
-                    openModal(src, caption);
-                });
-                
-                galleryContainer.appendChild(galleryItem);
-            });
-        }
-
-        // Fungsi untuk memuat prestasi
-        function loadAchievements() {
-            const data = getAllData();
-            achievementsContainer.innerHTML = '';
-            
-            data.achievements.forEach(item => {
-                const achievementItem = document.createElement('div');
-                achievementItem.className = 'flex items-start space-x-4 p-4 border border-gray-700 rounded-lg bg-card-dark-highlight';
-                
-                achievementItem.innerHTML = `
-                    <div class="flex-shrink-0">
-                        <i data-lucide="award" class="w-10 h-10 text-accent-gold"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-gray-100">${item.title}</h3>
-                        <p class="text-gray-400">${item.description}</p>
-                    </div>
-                `;
-                
-                achievementsContainer.appendChild(achievementItem);
-            });
-            
-            lucide.createIcons();
-        }
-
-        // =====================================
-        // FUNGSI BARU: KELOLA DATA (EDIT/HAPUS)
-        // =====================================
-
-        function loadManageData() {
-            const uploadData = getUploadData();
-            
-            // Load Manage Gallery
-            manageGalleryContainer.innerHTML = '';
-            if (uploadData.gallery.length === 0) {
-                manageGalleryContainer.innerHTML = '<p class="text-gray-400 text-center">Belum ada foto yang diupload</p>';
-            } else {
-                uploadData.gallery.forEach((item, index) => {
-                    const galleryItem = document.createElement('div');
-                    galleryItem.className = 'flex items-center justify-between p-3 bg-gray-800 rounded-lg';
-                    galleryItem.innerHTML = `
-                        <div class="flex items-center space-x-3 flex-1">
-                            <img src="${item.src}" alt="${item.title}" class="w-12 h-12 object-cover rounded">
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-white truncate">${item.title}</h4>
-                                <p class="text-sm text-gray-400 truncate">${item.description}</p>
-                            </div>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="edit-btn px-3 py-1 rounded text-sm font-medium edit-gallery-btn" data-index="${index}">
-                                <i data-lucide="edit" class="w-4 h-4"></i>
-                            </button>
-                            <button class="delete-btn px-3 py-1 rounded text-sm font-medium delete-gallery-btn" data-index="${index}">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    `;
-                    manageGalleryContainer.appendChild(galleryItem);
-                });
-            }
-
-            // Load Manage Songs
-            manageSongsContainer.innerHTML = '';
-            if (uploadData.songs.length === 0) {
-                manageSongsContainer.innerHTML = '<p class="text-gray-400 text-center">Belum ada lagu yang diupload</p>';
-            } else {
-                uploadData.songs.forEach((item, index) => {
-                    const songItem = document.createElement('div');
-                    songItem.className = 'flex items-center justify-between p-3 bg-gray-800 rounded-lg';
-                    songItem.innerHTML = `
-                        <div class="flex items-center space-x-3 flex-1">
-                            <i data-lucide="music" class="w-8 h-8 text-accent-gold"></i>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-white truncate">${item.title}</h4>
-                            </div>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="edit-btn px-3 py-1 rounded text-sm font-medium edit-song-btn" data-index="${index}">
-                                <i data-lucide="edit" class="w-4 h-4"></i>
-                            </button>
-                            <button class="delete-btn px-3 py-1 rounded text-sm font-medium delete-song-btn" data-index="${index}">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    `;
-                    manageSongsContainer.appendChild(songItem);
-                });
-            }
-
-            // Load Manage Achievements
-            manageAchievementsContainer.innerHTML = '';
-            if (uploadData.achievements.length === 0) {
-                manageAchievementsContainer.innerHTML = '<p class="text-gray-400 text-center">Belum ada prestasi yang diupload</p>';
-            } else {
-                uploadData.achievements.forEach((item, index) => {
-                    const achievementItem = document.createElement('div');
-                    achievementItem.className = 'flex items-center justify-between p-3 bg-gray-800 rounded-lg';
-                    achievementItem.innerHTML = `
-                        <div class="flex items-center space-x-3 flex-1">
-                            <i data-lucide="award" class="w-8 h-8 text-accent-gold"></i>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-white truncate">${item.title}</h4>
-                                <p class="text-sm text-gray-400 truncate">${item.description}</p>
-                            </div>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="edit-btn px-3 py-1 rounded text-sm font-medium edit-achievement-btn" data-index="${index}">
-                                <i data-lucide="edit" class="w-4 h-4"></i>
-                            </button>
-                            <button class="delete-btn px-3 py-1 rounded text-sm font-medium delete-achievement-btn" data-index="${index}">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    `;
-                    manageAchievementsContainer.appendChild(achievementItem);
-                });
-            }
-
-            lucide.createIcons();
-            attachManageEventListeners();
-        }
-
-        // Fungsi untuk attach event listeners ke tombol edit/hapus
-        function attachManageEventListeners() {
-            // Edit Gallery
-            document.querySelectorAll('.edit-gallery-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
-                    editGalleryItem(index);
-                });
-            });
-
-            // Delete Gallery
-            document.querySelectorAll('.delete-gallery-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
-                    deleteGalleryItem(index);
-                });
-            });
-
-            // Edit Song
-            document.querySelectorAll('.edit-song-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
-                    editSongItem(index);
-                });
-            });
-
-            // Delete Song
-            document.querySelectorAll('.delete-song-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
-                    deleteSongItem(index);
-                });
-            });
-
-            // Edit Achievement
-            document.querySelectorAll('.edit-achievement-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
-                    editAchievementItem(index);
-                });
-            });
-
-            // Delete Achievement
-            document.querySelectorAll('.delete-achievement-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.closest('button').getAttribute('data-index'));
-                    deleteAchievementItem(index);
-                });
-            });
-        }
-
-        // Fungsi Edit Gallery
-        function editGalleryItem(index) {
-            const uploadData = getUploadData();
-            const item = uploadData.gallery[index];
-            
-            const newTitle = prompt('Edit judul foto:', item.title);
-            if (newTitle === null) return;
-            
-            const newDesc = prompt('Edit deskripsi foto:', item.description);
-            if (newDesc === null) return;
-            
-            const updatedItem = {
-                ...item,
-                title: newTitle.trim(),
-                description: newDesc.trim()
-            };
-            
-            if (updateSharedData('gallery', index, updatedItem)) {
-                loadGallery();
-                loadManageData();
-                alertMessage('Foto berhasil diedit!', 'info');
-            } else {
-                alertMessage('Gagal mengedit foto', 'warning');
-            }
-        }
-
-        // Fungsi Delete Gallery
-        function deleteGalleryItem(index) {
-            if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
-                if (deleteSharedData('gallery', index)) {
-                    loadGallery();
-                    loadManageData();
-                    alertMessage('Foto berhasil dihapus!', 'info');
-                } else {
-                    alertMessage('Gagal menghapus foto', 'warning');
-                }
-            }
-        }
-
-        // Fungsi Edit Song
-        function editSongItem(index) {
-            const uploadData = getUploadData();
-            const item = uploadData.songs[index];
-            
-            const newTitle = prompt('Edit judul lagu:', item.title);
-            if (newTitle === null) return;
-            
-            const updatedItem = {
-                ...item,
-                title: newTitle.trim()
-            };
-            
-            if (updateSharedData('songs', index, updatedItem)) {
-                loadCacheFromIndexedDB().then(()=>{ renderPlaylist(); loadManageData(); });
-alertMessage('Lagu berhasil diedit!', 'info');
-            } else {
-                alertMessage('Gagal mengedit lagu', 'warning');
-            }
-        }
-
-        // Fungsi Delete Song
-        function deleteSongItem(index) {
-            if (confirm('Apakah Anda yakin ingin menghapus lagu ini?')) {
-                if (deleteSharedData('songs', index)) {
-                    loadCacheFromIndexedDB().then(()=>{ renderPlaylist(); loadManageData(); });
-alertMessage('Lagu berhasil dihapus!', 'info');
-                } else {
-                    alertMessage('Gagal menghapus lagu', 'warning');
-                }
-            }
-        }
-
-        // Fungsi Edit Achievement
-        function editAchievementItem(index) {
-            const uploadData = getUploadData();
-            const item = uploadData.achievements[index];
-            
-            const newTitle = prompt('Edit judul prestasi:', item.title);
-            if (newTitle === null) return;
-            
-            const newDesc = prompt('Edit deskripsi prestasi:', item.description);
-            if (newDesc === null) return;
-            
-            const updatedItem = {
-                ...item,
-                title: newTitle.trim(),
-                description: newDesc.trim()
-            };
-            
-            if (updateSharedData('achievements', index, updatedItem)) {
-                loadAchievements();
-                loadManageData();
-                alertMessage('Prestasi berhasil diedit!', 'info');
-            } else {
-                alertMessage('Gagal mengedit prestasi', 'warning');
-            }
-        }
-
-        // Fungsi Delete Achievement
-        function deleteAchievementItem(index) {
-            if (confirm('Apakah Anda yakin ingin menghapus prestasi ini?')) {
-                if (deleteSharedData('achievements', index)) {
-                    loadAchievements();
-                    loadManageData();
-                    alertMessage('Prestasi berhasil dihapus!', 'info');
-                } else {
-                    alertMessage('Gagal menghapus prestasi', 'warning');
-                }
-            }
-        }
-
-        // =====================================
-        // LOGIC MULTI-TRACK AUDIO PLAYER - DIPERBAIKI
-        // =====================================
-
-        // PERBAIKAN: Fungsi fade in audio
-        function fadeInAudio() {
-            clearInterval(fadeInterval);
-            if (audio.volume >= 0.9) {
-                audio.volume = 1;
-                return;
-            }
-            audio.volume = 0;
-            fadeInterval = setInterval(() => {
-                let newVolume = audio.volume + 0.1;
-                if (newVolume >= 1) {
-                    audio.volume = 1;
-                    clearInterval(fadeInterval);
-                } else {
-                    audio.volume = newVolume;
-                }
-            }, 50);
-        }
-
-        // PERBAIKAN: Fungsi fade out audio (dengan callback)
-        function fadeOutAudio(callback) {
-            clearInterval(fadeInterval);
-            if (audio.volume <= 0.1) {
-                audio.volume = 0;
-                if (callback) callback();
-                return;
-            }
-            fadeInterval = setInterval(() => {
-                let newVolume = audio.volume - 0.1;
-                if (newVolume <= 0) {
-                    audio.volume = 0;
-                    clearInterval(fadeInterval);
-                    if (callback) callback();
-                } else {
-                    audio.volume = newVolume;
-                }
-            }, 50);
-        }
-
-        // PERBAIKAN: Fungsi update UI ikon dengan transisi
-        function updatePlayerUI() {
-            const data = getAllData();
-            const songs = data.songs;
-            
-            if (songs.length === 0) {
-                miniPlayer.disabled = true;
-                return;
-            }
-
-            const iconName = isPlaying ? 'pause' : 'play';
-            const currentSvg = miniPlayer.querySelector('svg');
-
-            if (currentSvg) {
-                currentSvg.style.opacity = '0';
-                currentSvg.style.transform = 'scale(0.7)';
-            }
-
-            setTimeout(() => {
-                miniPlayer.innerHTML = `<i data-lucide="${iconName}" class="mini-player-icon"></i>`;
-                
-                renderPlaylist(); 
-                
-                const newSvg = miniPlayer.querySelector('svg');
-                if (newSvg) {
-                    newSvg.style.opacity = '0';
-                    newSvg.style.transform = 'scale(0.7)';
-                    
-                    void newSvg.offsetWidth;
-                    
-                    newSvg.style.opacity = '1';
-                    newSvg.style.transform = 'scale(1)';
-                }
-            }, currentSvg ? 150 : 0);
-        }
-
-        // PERBAIKAN: loadSong dengan fade out
-        function loadSong(index, shouldPlay = false) {
-            const data = getAllData();
-            const songs = data.songs;
-            
-            if (index >= 0 && index < songs.length) {
-                currentSongIndex = index;
-
-                const loadAndPlay = () => {
-                    audio.src = songs[currentSongIndex].url;
-                    audio.load();
-                    const iconTag = miniPlayer.querySelector('i');
-                    if(iconTag) iconTag.setAttribute('data-lucide', shouldPlay ? 'pause' : 'play');
-                    renderPlaylist();
-
-                    if (shouldPlay) {
-                        playAudio();
-                    }
-                };
-                
-                if (isPlaying) {
-                    fadeOutAudio(loadAndPlay);
-                } else {
-                    loadAndPlay();
-                }
-            }
-        }
-
-        // PERBAIKAN: playAudio dengan fade in
-        function playAudio() {
-            audio.volume = 0;
-            const playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    isPlaying = true;
-                    updatePlayerUI();
-                    fadeInAudio();
-                }).catch(error => {
-                    audio.pause();
-                    isPlaying = false;
-                    updatePlayerUI();
-                    console.log("Autoplay diblokir atau gagal. Tekan tombol Play untuk memulai.");
-                    alertMessage("Audio tidak bisa diputar otomatis. Silakan tekan tombol Play/Pause.", "warning");
-                });
-            }
-        }
-
-        // PERBAIKAN: pauseAudio dengan fade out
-        function pauseAudio() {
-            fadeOutAudio(() => {
-                audio.pause();
-                isPlaying = false;
-                updatePlayerUI();
-            });
-        }
-
-        function nextTrack() {
-            const data = getAllData();
-            const songs = data.songs;
-            let newIndex = (currentSongIndex + 1) % songs.length;
-            loadSong(newIndex, isPlaying);
-        }
-
-        // =====================================
-        // LOGIC MODAL GALERI
-        // =====================================
         function openModal(src, caption) {
+            const modal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalCaption = document.getElementById('modal-caption');
+            
             modalImage.src = src;
             modalCaption.textContent = caption;
             
-            imageModal.classList.remove('hidden');
-            imageModal.classList.add('flex');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
             setTimeout(() => {
-                imageModal.style.opacity = 1;
+                modal.style.opacity = 1;
+                modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100');
             }, 10);
         }
 
         function closeModal() {
-            imageModal.style.opacity = 0;
+            const modal = document.getElementById('image-modal');
+            modal.style.opacity = 0;
+            modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+            modal.querySelector('.modal-content').classList.remove('scale-100', 'opacity-100');
             setTimeout(() => {
-                imageModal.classList.remove('flex');
-                imageModal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
             }, 300);
         }
 
-        // =====================================
-        // LOGIC MODAL PLAYLIST
-        // =====================================
         function openPlaylistModal() {
-            renderPlaylist();
-            playlistModal.classList.remove('hidden');
-            playlistModal.classList.add('flex');
+            const modal = document.getElementById('playlist-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
             setTimeout(() => {
-                playlistModal.style.opacity = 1;
+                modal.style.opacity = 1;
+                modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100');
             }, 10);
         }
 
         function closePlaylistModal() {
-            playlistModal.style.opacity = 0;
+            const modal = document.getElementById('playlist-modal');
+            modal.style.opacity = 0;
+            modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+            modal.querySelector('.modal-content').classList.remove('scale-100', 'opacity-100');
             setTimeout(() => {
-                playlistModal.classList.remove('flex');
-                playlistModal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
             }, 300);
         }
-        
-        function renderPlaylist() {
-            const data = getAllData();
-            const songs = data.songs;
+
+        function toggleTheme() {
+            const body = document.body;
+            const isLightMode = body.classList.contains('light-mode');
+            const themeIcon = document.getElementById('theme-toggle-btn').querySelector('i');
             
-            playlistContainer.innerHTML = '';
-            
-            songs.forEach((song, index) => {
-                const isActive = index === currentSongIndex;
-                const listItem = document.createElement('div');
-                listItem.className = `p-2 rounded-lg cursor-pointer transition duration-200 flex items-center ${
-                    isActive ? 'bg-accent-crimson text-white font-semibold' : 'hover:bg-gray-700 text-gray-300'
-                }`;
-                
-                listItem.innerHTML = `
-                    ${isActive ? '<i data-lucide="volume-2" class="w-4 h-4 mr-2"></i>' : '<i data-lucide="music" class="w-4 h-4 mr-2"></i>'}
-                    <span>${index + 1}. ${song.title}</span>
-                `;
-                listItem.setAttribute('data-index', index);
-                
-                listItem.addEventListener('click', () => {
-                    if (index !== currentSongIndex) {
-                        loadSong(index, true); 
-                        closePlaylistModal();
-                    } else if (!isPlaying) {
-                        playAudio();
-                        closePlaylistModal();
-                    } else {
-                        closePlaylistModal();
-                    }
-                });
-                
-                playlistContainer.appendChild(listItem);
-            });
+            if (isLightMode) {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.setAttribute('data-lucide', 'moon');
+            } else {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+                themeIcon.setAttribute('data-lucide', 'sun');
+            }
             
             lucide.createIcons();
         }
 
-        // =====================================
-        // LOGIC ADMIN PANEL
-        // =====================================
-
-        // Fungsi untuk memeriksa status login admin
-        function checkAdminLoginStatus() {
-            const isLoggedIn = localStorage.getItem('brigpasnesaga_admin_loggedin') === 'true';
-            if (isLoggedIn) {
-                showAdminPanel();
-                loadManageData(); // BARU: Load data manage saat login
-            }
-            return isLoggedIn;
-        }
-
-        // Fungsi untuk menampilkan panel admin
-        function showAdminPanel() {
-            adminLoginForm.classList.add('hidden');
-            adminPanel.classList.remove('hidden');
-        }
-
-        // Fungsi untuk menyembunyikan panel admin
-        function hideAdminPanel() {
-            adminLoginForm.classList.remove('hidden');
-            adminPanel.classList.add('hidden');
-        }
-
-        // Fungsi untuk login admin
-        function adminLogin() {
-            const username = document.getElementById('admin-username').value;
-            const password = document.getElementById('admin-password').value;
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const themeIcon = document.getElementById('theme-toggle-btn').querySelector('i');
             
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                localStorage.setItem('brigpasnesaga_admin_loggedin', 'true');
-                showAdminPanel();
-                loadManageData(); // BARU: Load data manage
-                alertMessage("Login berhasil! Selamat datang di panel admin.", "info");
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.setAttribute('data-lucide', 'sun');
             } else {
-                alertMessage("Username atau password salah.", "warning");
+                document.body.classList.remove('light-mode');
+                themeIcon.setAttribute('data-lucide', 'moon');
+                localStorage.setItem('theme', 'dark');
             }
         }
 
-        // Fungsi untuk logout admin
-        function adminLogout() {
-            localStorage.setItem('brigpasnesaga_admin_loggedin', 'false');
-            hideAdminPanel();
-            document.getElementById('admin-username').value = '';
-            document.getElementById('admin-password').value = '';
-            alertMessage("Anda telah logout dari panel admin.", "info");
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            setTimeout(() => {
+                const activePage = document.getElementById(pageId);
+                if (activePage) {
+                    activePage.classList.add('active');
+                }
+
+                const activeNavItem = document.querySelector(`.bottom-nav-item[data-page="${pageId}"]`);
+                if (activeNavItem) {
+                    activeNavItem.classList.add('active');
+                }
+            }, 50);
         }
 
-        // PERBAIKAN: Fungsi untuk menambah foto galeri - TANPA BATASAN UKURAN
-        function addGalleryImage() {
-            const imageFile = galleryImageFileInput.files[0];
-            const imageTitle = galleryImageTitleInput.value.trim();
-            const imageDesc = galleryImageDescInput.value.trim();
+        // ===========================================
+        // INITIALIZATION
+        // ===========================================
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load theme
+            loadTheme();
             
-            if (!imageFile || !imageTitle) {
-                alertMessage("File foto dan judul harus diisi.", "warning");
-                return;
+            // Load data
+            await loadData();
+            
+            // Setup real-time listener
+            if (db) {
+                db.collection('gallery').orderBy('createdAt', 'desc').onSnapshot(() => loadData());
+                db.collection('songs').orderBy('createdAt', 'desc').onSnapshot(() => loadData());
+                db.collection('achievements').orderBy('createdAt', 'desc').onSnapshot(() => loadData());
             }
+
+            // Event listeners for admin functions
+            document.getElementById('add-gallery-image-btn').addEventListener('click', addGalleryImage);
+            document.getElementById('add-song-btn').addEventListener('click', addSong);
+            document.getElementById('add-achievement-btn').addEventListener('click', addAchievement);
             
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const newImage = {
-                    src: e.target.result,
-                    title: imageTitle,
-                    description: imageDesc
-                };
+            // Music player events
+            miniPlayer.addEventListener('click', () => {
+                isPlaying ? pauseAudio() : playAudio();
+            });
+
+            audio.addEventListener('ended', () => {
+                const data = [...defaultData.songs, ...appData.songs];
+                if (data.length > 0) {
+                    let newIndex = (currentSongIndex + 1) % data.length;
+                    loadSong(newIndex, true);
+                }
+            });
+
+            // Admin login
+            const ADMIN_CREDENTIALS = { 
+                username: "BRIGPASNESAGA", 
+                password: "ADMINBRIGPAS" 
+            };
+            
+            document.getElementById('admin-login-btn').addEventListener('click', () => {
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
                 
-                const success = saveSharedData('gallery', newImage);
-                
-                if (success) {
-                    galleryImageFileInput.value = '';
-                    galleryImageTitleInput.value = '';
-                    galleryImageDescInput.value = '';
-                    
-                    loadGallery();
-                    loadManageData(); // BARU: Refresh manage data
-                    alertMessage("Foto berhasil ditambahkan ke galeri! Semua pengunjung bisa melihatnya.", "info");
+                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                    document.getElementById('admin-login-form').classList.add('hidden');
+                    document.getElementById('admin-panel').classList.remove('hidden');
+                    alertMessage("✅ Login berhasil! Selamat datang di panel admin.", "success");
                 } else {
-                    alertMessage("Gagal menyimpan foto.", "warning");
+                    alertMessage("❌ Username atau password salah", "warning");
                 }
-            };
-            reader.readAsDataURL(imageFile);
-        }
+            });
 
-        // PERBAIKAN: Fungsi untuk menambah lagu - DIPERBAIKI LAGI
-        function addSong() {
-            const songFile = songFileInput.files[0];
-            const songTitle = songTitleInput.value.trim();
+            document.getElementById('admin-logout-btn').addEventListener('click', () => {
+                document.getElementById('admin-login-form').classList.remove('hidden');
+                document.getElementById('admin-panel').classList.add('hidden');
+                document.getElementById('admin-username').value = '';
+                document.getElementById('admin-password').value = '';
+                alertMessage("👋 Anda telah logout dari panel admin.", "info");
+            });
+
+            // Theme toggle
+            document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
             
-            if (!songFile || !songTitle) {
-                alertMessage("File lagu dan judul harus diisi.", "warning");
-                return;
-            }
-            
-            // Validasi format file yang lebih longgar
-            const allowedTypes = [
-                'audio/mpeg', 
-                'audio/wav', 
-                'audio/webm', 
-                'audio/ogg', 
-                'audio/mp3', 
-                'audio/x-m4a',
-                'audio/aac',
-                'audio/x-wav'
-            ];
-            
-            const fileExtension = songFile.name.toLowerCase().split('.').pop();
-            const allowedExtensions = ['mp3', 'wav', 'webm', 'ogg', 'm4a', 'aac'];
-            
-            if (!allowedTypes.includes(songFile.type) && !allowedExtensions.includes(fileExtension)) {
-                alertMessage(`Format file tidak didukung. Gunakan MP3, WAV, WEBM, atau OGG. File Anda: ${songFile.type}`, "warning");
-                return;
-            }
-            
-            console.log("File info:", {
-                name: songFile.name,
-                type: songFile.type,
-                size: songFile.size,
-                extension: fileExtension
+            // Navigation
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const pageId = item.getAttribute('data-page');
+                    showPage(pageId);
+                    history.pushState(null, '', `#${pageId}`);
+                });
             });
             
-            // Tampilkan loading state
-            addSongBtn.disabled = true;
-            addSongBtn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Mengupload...</span>';
-            lucide.createIcons();
-            songUploadLoading.classList.add('spinning');
+            // Playlist modal
+            document.getElementById('playlist-open-btn').addEventListener('click', openPlaylistModal);
+            document.getElementById('close-playlist-btn').addEventListener('click', closePlaylistModal);
             
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                console.log("FileReader berhasil, data length:", e.target.result.length);
-                
-                try {
-                    const newSong = {
-                        url: e.target.result,
-                        title: songTitle
-                    };
-                    
-                    console.log("Menyimpan lagu ke shared data...");
-                    const success = saveSharedData('songs', newSong);
-                    
-                    // Reset state
-                    addSongBtn.disabled = false;
-                    addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
-                    lucide.createIcons();
-                    songUploadLoading.classList.remove('spinning');
-                    
-                    if (success) {
-                        songFileInput.value = '';
-                        songTitleInput.value = '';
-                        
-                        loadCacheFromIndexedDB().then(()=>{ renderPlaylist(); loadManageData(); });
-alertMessage("Lagu berhasil ditambahkan ke playlist! Semua pengunjung bisa mendengarnya.", "info");
-                    } else {
-                        // silent fail
-console.warn("Gagal menyimpan lagu (silent).");
-                    }
-                } catch (error) {
-                    console.error("Error dalam proses save:", error);
-                    addSongBtn.disabled = false;
-                    addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
-                    lucide.createIcons();
-                    songUploadLoading.classList.remove('spinning');
-                    alertMessage("Terjadi error saat menyimpan lagu: " + error.message, "warning");
-                }
-            };
-            
-            reader.onerror = function(error) {
-                console.error("FileReader error:", error);
-                // Reset state jika error
-                addSongBtn.disabled = false;
-                addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
-                lucide.createIcons();
-                songUploadLoading.classList.remove('spinning');
-                alertMessage("Gagal membaca file lagu. File mungkin rusak atau terlalu besar.", "warning");
-            };
-            
-            reader.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    console.log(`Upload progress: ${percent}%`);
-                }
-            };
-            
-            // Coba baca sebagai data URL
-            try {
-                reader.readAsDataURL(songFile);
-            } catch (error) {
-                console.error("Error membaca file:", error);
-                addSongBtn.disabled = false;
-                addSongBtn.innerHTML = '<i data-lucide="music" class="w-5 h-5"></i><span>Tambah Lagu ke Playlist</span>';
-                lucide.createIcons();
-                songUploadLoading.classList.remove('spinning');
-                alertMessage("Tidak bisa membaca file. Coba file lain.", "warning");
-            }
-        }
-
-        // Fungsi untuk menambah prestasi
-        function addAchievement() {
-            const achievementTitle = achievementTitleInput.value.trim();
-            const achievementDesc = achievementDescInput.value.trim();
-            
-            if (!achievementTitle || !achievementDesc) {
-                alertMessage("Judul dan deskripsi prestasi harus diisi.", "warning");
-                return;
-            }
-            
-            const newAchievement = {
-                title: achievementTitle,
-                description: achievementDesc
-            };
-            
-            const success = saveSharedData('achievements', newAchievement);
-            
-            if (success) {
-                achievementTitleInput.value = '';
-                achievementDescInput.value = '';
-                
-                loadAchievements();
-                loadManageData(); // BARU: Refresh manage data
-                alertMessage("Prestasi berhasil ditambahkan! Semua pengunjung bisa melihatnya.", "info");
-            } else {
-                alertMessage("Gagal menyimpan prestasi.", "warning");
-            }
-        }
-
-        // =====================================
-        // EVENT LISTENERS
-        // =====================================
-
-        // Navigasi Halaman
-        bottomNavItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const pageId = item.getAttribute('data-page');
-                showPage(pageId);
-                history.pushState(null, '', `#${pageId}`);
-            });
-        });
-        
-        // Tombol Playlist Header
-        playlistOpenBtn.addEventListener('click', openPlaylistModal);
-        closePlaylistBtn.addEventListener('click', closePlaylistModal);
-        
-        // Tutup modal playlist saat klik backdrop
-        playlistModal.addEventListener('click', (e) => {
-            if (e.target === playlistModal) {
-                closePlaylistModal();
-            }
-        });
-
-        // Kontrol Audio
-        miniPlayer.addEventListener('click', () => {
-            if (isPlaying) {
-                pauseAudio();
-            } else {
-                playAudio();
-            }
-        });
-
-        // Auto-play next track ketika lagu selesai
-        audio.addEventListener('ended', () => {
-            console.log("Lagu selesai. Memutar lagu berikutnya.");
-            nextTrack();
-        });
-
-        // Logika Tombol Kirim WhatsApp
-        sendWhatsappBtn.addEventListener('click', () => {
-            const feedback = feedbackInput.value.trim();
-            
-            if (feedback === "") {
-                alertMessage("Mohon isi masukan Anda terlebih dahulu.", "warning"); 
-                return;
-            }
-
-            const messageTemplate = `*MASUKAN UNTUK BRIGPASNESAGA*\n\nDari Pengunjung Website:\n\n---\n${feedback}\n---`;
-            
-            const whatsappUrl = `https://wa.me/${adminWhatsappNumber}?text=${encodeURIComponent(messageTemplate)}`;
-
-            window.open(whatsappUrl, '_blank');
-
-            alertMessage("Masukan berhasil disiapkan! Jendela WhatsApp baru telah dibuka.", "info");
-
-            feedbackInput.value = '';
-        });
-
-        // Tutup modal saat tombol X diklik
-        closeModalBtn.addEventListener('click', closeModal);
-
-        // Tutup modal saat mengklik backdrop
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal) {
-                closeModal();
-            }
-        });
-
-        // Tutup modal saat menekan tombol ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (!imageModal.classList.contains('hidden')) {
+            // Image modal
+            document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+            document.getElementById('image-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('image-modal')) {
                     closeModal();
                 }
-                if (!playlistModal.classList.contains('hidden')) {
-                    closePlaylistModal();
+            });
+
+            // WhatsApp feedback
+            document.getElementById('send-whatsapp-btn').addEventListener('click', () => {
+                const feedback = document.getElementById('feedback-input').value.trim();
+                const adminWhatsappNumber = "6283159696918";
+                
+                if (feedback === "") {
+                    alertMessage("Mohon isi masukan Anda terlebih dahulu.", "warning"); 
+                    return;
                 }
+
+                const messageTemplate = `*MASUKAN UNTUK BRIGPASNESAGA*\n\nDari Pengunjung Website:\n\n---\n${feedback}\n---`;
+                const whatsappUrl = `https://wa.me/${adminWhatsappNumber}?text=${encodeURIComponent(messageTemplate)}`;
+
+                window.open(whatsappUrl, '_blank');
+                alertMessage("📤 Masukan berhasil disiapkan! Jendela WhatsApp baru telah dibuka.", "info");
+                document.getElementById('feedback-input').value = '';
+            });
+
+            // Close modals with ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (!document.getElementById('image-modal').classList.contains('hidden')) {
+                        closeModal();
+                    }
+                    if (!document.getElementById('playlist-modal').classList.contains('hidden')) {
+                        closePlaylistModal();
+                    }
+                }
+            });
+
+            // Handle initial page from URL hash
+            let initialPage = window.location.hash.substring(1) || 'home';
+            if (!document.getElementById(initialPage)) {
+                initialPage = 'home';
             }
+            showPage(initialPage);
+            
+            // Initialize icons
+            lucide.createIcons();
         });
 
-        // Toggle tema
-        themeToggleBtn.addEventListener('click', toggleTheme);
-
-        // =====================================
-        // EVENT LISTENERS ADMIN
-        // =====================================
-
-        // Login admin
-        adminLoginBtn.addEventListener('click', adminLogin);
-
-        // Logout admin
-        adminLogoutBtn.addEventListener('click', adminLogout);
-
-        // Tambah foto galeri
-        addGalleryImageBtn.addEventListener('click', addGalleryImage);
-
-        // Tambah lagu
-        addSongBtn.addEventListener('click', addSong);
-
-        // Tambah prestasi
-        addAchievementBtn.addEventListener('click', addAchievement);
-
-        // =====================================
-        // INISIALISASI
-        // =====================================
-        
-        // Tampilkan halaman yang sesuai saat pertama kali load
-        let initialPage = window.location.hash.substring(1) || 'home';
-        showPage(initialPage);
-        
-        // Inisialisasi Audio Player saat window dimuat
-        window.onload = async function() {
-    loadCacheFromIndexedDB().then(()=>{});const data = getAllData();
-            const songs = data.songs;
-            
-            if (songs.length > 0) {
-                loadSong(0);
-                const iconTag = miniPlayer.querySelector('i');
-                if(iconTag) iconTag.setAttribute('data-lucide', 'play');
-                renderPlaylist();
-            }
-            
-            // Muat galeri dan prestasi
-            loadGallery();
-            loadAchievements();
-            
-            // Periksa status login admin
-            checkAdminLoginStatus();
-            
-            // Load tema
-            loadTheme();
-        };
-        
-        // Check for updates periodically
-        setInterval(checkForUpdates, 30000);
-        
     </script>
 </body>
-                                    </html>
+    </html>

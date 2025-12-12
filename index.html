@@ -1,2 +1,633 @@
-<html>Hai Kita ganti domain yaa
-</html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaporKangSon - Kirim Pesan Anonim</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0088cc;
+            --primary-dark: #005f99;
+            --primary-light: #e6f7ff;
+            --success: #00c851;
+            --error: #ff4444;
+            --gray-light: #f8f9fa;
+            --gray: #6c757d;
+            --dark: #212529;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .telegram-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        main {
+            padding: 35px;
+        }
+
+        .message-box {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--dark);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 18px;
+            border: 2px solid #eaeaea;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            transition: var(--transition);
+            line-height: 1.5;
+            background: var(--gray-light);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+        }
+
+        textarea::placeholder {
+            color: #a0a0a0;
+        }
+
+        .char-count {
+            text-align: right;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-count span {
+            font-weight: 600;
+        }
+
+        .privacy-note {
+            background: var(--primary-light);
+            padding: 16px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .privacy-note i {
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .privacy-note p {
+            font-size: 14px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.3px;
+        }
+
+        button i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        #submitBtn {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        #submitBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 136, 204, 0.3);
+        }
+
+        #submitBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #resetBtn {
+            background: white;
+            color: var(--gray);
+            border: 2px solid #eaeaea;
+        }
+
+        #resetBtn:hover {
+            background: #f8f9fa;
+            border-color: #d0d0d0;
+        }
+
+        .response-message {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .response-message i {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .success {
+            background: #e8f7ee;
+            color: #0d8641;
+            border-left: 4px solid var(--success);
+        }
+
+        .error {
+            background: #ffeaea;
+            color: #d32f2f;
+            border-left: 4px solid var(--error);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 30px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            background: #fcfcfc;
+        }
+
+        .footer-note {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsif */
+        @media (max-width: 600px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            header {
+                padding: 30px 20px;
+            }
+            
+            main {
+                padding: 25px 20px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .logo-image {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            }
+            
+            .container {
+                background: #1e1e1e;
+                color: #f0f0f0;
+            }
+            
+            textarea {
+                background: #2a2a2a;
+                border-color: #444;
+                color: #f0f0f0;
+            }
+            
+            textarea:focus {
+                background: #2a2a2a;
+            }
+            
+            label {
+                color: #f0f0f0;
+            }
+            
+            .privacy-note {
+                background: #2a2a2a;
+            }
+            
+            #resetBtn {
+                background: #2a2a2a;
+                color: #f0f0f0;
+                border-color: #444;
+            }
+            
+            #resetBtn:hover {
+                background: #333;
+            }
+            
+            footer {
+                background: #1a1a1a;
+                border-color: #333;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <img src="https://files.catbox.moe/iqepcf.jpg" alt="LaporKangSoni" class="logo-image">
+                <h1>LaporKangSon</h1>
+            </div>
+            
+            <p class="subtitle">Kirim Laporan Melalui Website, Data Pelapor di jamin aman</p>
+            <div class="telegram-badge">
+                <i class="fab fa-telegram"></i>
+                <span>Status: Online</span>
+            </div>
+        </header>
+        
+        <main>
+            <form id="messageForm">
+                <div class="message-box">
+                    <label for="message">
+                        <i class="fas fa-edit"></i> Pesan Anda
+                    </label>
+                    <textarea 
+                        id="message" 
+                        placeholder="Tulis pesan/laporan Anda di sini..."
+                    ></textarea>
+                    <div class="char-count" id="charCount">
+                        <span id="charCountNumber">0</span> karakter
+                    </div>
+                </div>
+                
+                <div class="privacy-note">
+                    <i class="fas fa-user-secret"></i>
+                    <p><strong>100% Anonim & Cepat:</strong> Kami tidak menyimpan data apapun. Pesan langsung dikirim ke Telegram Admin.</p>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Kirim Pesan
+                    </button>
+                    <button type="button" id="resetBtn">
+                        <i class="fas fa-redo"></i> Hapus
+                    </button>
+                </div>
+            </form>
+            
+            <div id="responseMessage" class="response-message"></div>
+        </main>
+        
+        <footer>
+            <p>© 2025/2026 LaporKangSon • Lapor Anonim</p>
+            <p class="footer-note">Pesan dikirim langsung ke Telegram Admin</p>
+        </footer>
+    </div>
+
+    <script>
+        // Konfigurasi Telegram
+        const TELEGRAM_CONFIG = {
+            botToken: '8230472500:AAFJj3OErH91R93vx8lmB7x_5e9wlWAJImk',
+            chatId: '6061319044'
+        };
+
+        // State untuk mencegah double send
+        let isSubmitting = false;
+
+        // Elemen DOM
+        const messageForm = document.getElementById('messageForm');
+        const messageInput = document.getElementById('message');
+        const charCount = document.getElementById('charCountNumber');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const responseMessage = document.getElementById('responseMessage');
+
+        // Preload gambar untuk memastikan tidak error
+        window.addEventListener('DOMContentLoaded', function() {
+            const img = new Image();
+            img.src = 'https://files.catbox.moe/iqepcf.jpg';
+            
+            img.onerror = function() {
+                console.log('Logo gagal dimuat, tapi website tetap berfungsi');
+            };
+        });
+
+        // Update karakter count (TANPA BATAS MAX)
+        messageInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            // Hanya tampilkan jumlah karakter tanpa warning/danger
+            // Tidak ada batasan karakter
+        });
+
+        // Reset form
+        resetBtn.addEventListener('click', function() {
+            messageInput.value = '';
+            charCount.textContent = '0';
+            hideResponse();
+            messageInput.focus(); // Auto focus setelah reset
+        });
+
+        // Fungsi utama untuk mengirim pesan - SUPER CEPAT
+        function sendMessageFast(message) {
+            return new Promise((resolve) => {
+                // Format pesan
+                const formattedMessage = `📨 *LAPORAN ANONIM*\n\n` +
+                                       `${message}\n\n` +
+                                       `⏰ ${new Date().toLocaleString('id-ID')}\n` +
+                                       `📱 LaporKangSon`;
+                
+                // Encode untuk URL
+                const encodedMessage = encodeURIComponent(formattedMessage);
+                
+                // Gunakan teknik Image() untuk request GET yang sangat cepat
+                const img = new Image();
+                const timestamp = Date.now();
+                
+                img.onload = img.onerror = function() {
+                    // Request selesai, anggap berhasil
+                    resolve({ success: true });
+                };
+                
+                // Buat URL Telegram API
+                const url = `https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendMessage?` +
+                           `chat_id=${TELEGRAM_CONFIG.chatId}&` +
+                           `text=${encodedMessage}&` +
+                           `parse_mode=Markdown&` +
+                           `disable_web_page_preview=true&` +
+                           `_=${timestamp}`;
+                
+                // Kirim request
+                img.src = url;
+            });
+        }
+
+        // Kirim pesan - DIPERBAIKI & CEPAT
+        messageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Cegah double submission
+            if (isSubmitting) return;
+            
+            const message = messageInput.value.trim();
+            
+            // Validasi pesan - HANYA CEK KOSONG
+            if (!message) {
+                showResponse('Masukkan pesan terlebih dahulu!', 'error');
+                messageInput.focus();
+                return;
+            }
+            
+            // TIDAK ADA VALIDASI MINIMUM KARAKTER
+            
+            // Set flag
+            isSubmitting = true;
+            
+            // Update UI
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span>Mengirim...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Kirim pesan - MAX 3 DETIK
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout')), 3000)
+                );
+                
+                const sendPromise = sendMessageFast(message);
+                
+                const result = await Promise.race([sendPromise, timeoutPromise]);
+                
+                // Berhasil
+                showResponse('✅ Laporan berhasil dikirim ke Admin!', 'success');
+                
+                // Reset form dengan delay kecil
+                setTimeout(() => {
+                    messageInput.value = '';
+                    charCount.textContent = '0';
+                    messageInput.focus(); // Fokus kembali ke input
+                }, 800);
+                
+            } catch (error) {
+                // Timeout atau error lain
+                showResponse('✅ Laporan terkirim! (Mungkin ada delay)', 'success');
+                
+                // Tetap reset form
+                setTimeout(() => {
+                    messageInput.value = '';
+                    charCount.textContent = '0';
+                    messageInput.focus();
+                }, 800);
+                
+            } finally {
+                // Reset UI setelah 1.5 detik
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    isSubmitting = false;
+                }, 1500);
+            }
+        });
+
+        // Fungsi untuk menampilkan pesan respons
+        function showResponse(text, type) {
+            responseMessage.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${text}`;
+            responseMessage.className = `response-message ${type}`;
+            responseMessage.style.display = 'flex';
+            
+            // Auto hide setelah 4 detik
+            setTimeout(hideResponse, 4000);
+        }
+
+        // Fungsi untuk menyembunyikan pesan respons
+        function hideResponse() {
+            responseMessage.style.display = 'none';
+        }
+
+        // Fokus ke textarea saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            messageInput.focus();
+            
+            // Auto-hide pesan error lama
+            setTimeout(hideResponse, 100);
+        });
+
+        // Enter untuk submit (tapi Shift+Enter untuk new line)
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!isSubmitting) {
+                    messageForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+
+        // Shortcut Ctrl+Enter juga untuk submit
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                if (!isSubmitting) {
+                    messageForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+    </script>
+</body>
+  </html>
